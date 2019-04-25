@@ -1,0 +1,11 @@
+{
+    "name": "r2r-server",
+    "version": "1.0.0",
+    "dependencies": {
+        "dop": "file:../dop"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "start": "node index"
+    }
+}
