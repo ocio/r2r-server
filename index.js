@@ -6,6 +6,6 @@ transport.on('connect', () => {
 dop.onSubscribe(() => {
     console.log('onSubscribe')
     return {
-        mola: function() {}
+        login: (user, pass) => `${user}:${pass}`
     }
 })
