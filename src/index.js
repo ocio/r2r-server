@@ -1,8 +1,8 @@
-const dop = require('dop')
+const { onSubscribe, listen } = require('dop')
 const endpoints = require('./endpoints')
-const transport = dop.listen({ port: 4444 })
+const transport = listen({ port: 4444 })
 
-dop.onSubscribe((...args) => {
+onSubscribe((...args) => {
     // const { node } = dop.getRequest(args)
     return endpoints
 })
