@@ -39,16 +39,21 @@ function joinNewGame({ player_id }) {
     const games = state.games
     for (let game_id in games) {
         const game = games[game_id]
-        if (!game.active) {
+        if (game.public && game.status === 'WAITING_FOR_PLAYERS') {
             // add player logic
             // return game
         }
     }
 }
 
-function createGame() {
+function createGame({ public = true }) {
     const id = dop.util.uuid(16)
-    const game = { id, active: false, players: [] }
+    const game = {
+        id,
+        public,
+        status: 'WAITING_FOR_PLAYERS',
+        players: []
+    }
     state.games[id] = game
     return game
 }
