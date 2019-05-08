@@ -1,7 +1,16 @@
 const { register } = require('dop')
 
 const state = {
-    games: {}
+    matching_game_id: undefined,
+    users: {}, // users connected
+    games: {
+        // [id]: {
+        //     id,
+        //     players: [
+        //         { nickname: 'Paco' }
+        //     ]
+        // }
+    }
 }
 
-module.exports = register(state)
+module.exports = state
