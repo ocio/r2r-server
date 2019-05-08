@@ -1,8 +1,7 @@
 const { register } = require('dop')
 
 const state = {
-    matching_game_id: undefined,
-    users: {}, // users connected
+    players: {}, // players connected
     games: {
         // [id]: {
         //     id,

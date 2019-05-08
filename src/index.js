@@ -1,20 +1,13 @@
 const { onSubscribe, listen } = require('dop')
+const { deletePlayer } = require('./store/actions')
 const endpoints = require('./endpoints')
 const transport = listen({ port: 4444 })
 
-onSubscribe((...args) => {
-    // const { node } = dop.getRequest(args)
+onSubscribe(() => {
     return endpoints
 })
 
-// transport.on('connect', node => {
-//     const objects = Object.keys(dop.data.object).length
-//     const nodes = Object.keys(dop.data.node).length
-//     console.log('connect', { objects, nodes })
-// })
-// transport.on('message', (node, message) => {
-//     // console.log('message', message)
-// })
-// transport.on('disconnect', node => {
-//     console.log('disconnect')
-// })
+transport.on('disconnect', node => {
+    console.log('ondisconnect')
+    deletePlayer({ id: node.id })
+})
