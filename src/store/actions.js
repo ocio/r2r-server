@@ -1,11 +1,12 @@
+const { uuid } = require('../utils')
 const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
 const { GAME_STATUS } = require('../const')
 
 function createPlayer({ node, nickname }) {
-    const player = new Player({ node, nickname })
-    const id = player.id
+    const id = 'Player_' + uuid(16, state.players)
+    const player = new Player({ id, node, nickname })
     node.player_id = id
     state.players[id] = player
     console.log('createPlayer')
@@ -35,8 +36,8 @@ function deletePlayer({ player_id }) {
 }
 
 function createGame() {
-    const game = new Game({ public: true })
-    const id = game.id
+    const id = 'Game_' + uuid(16, state.games)
+    const game = new Game({ id, public: true })
     state.games[id] = game
     return game
 }

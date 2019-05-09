@@ -2,8 +2,8 @@ const dop = require('dop')
 const { GAME_STATUS } = require('../const')
 const { uuid } = require('../utils')
 
-function Game({ public }) {
-    this.id = 'Game_' + uuid(16)
+function Game({ id, public }) {
+    this.id = id
     this.public = public
     this.status = GAME_STATUS.WAITING_PLAYERS
     this.players = {
