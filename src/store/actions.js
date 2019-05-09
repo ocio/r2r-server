@@ -1,14 +1,10 @@
-const dop = require('dop')
 const state = require('./state')
+const Player = require('../model/Player')
+const { GAME_STATUS } = require('../const')
 
 function createPlayer({ node, nickname }) {
-    const id = dop.util.uuid(16)
-    const player = {
-        id,
-        node, // node object
-        nickname,
-        game_id: undefined // current playing game
-    }
+    const player = new Player({ node, nickname })
+    const id = player.id
     node.id = id
     state.players[id] = player
     console.log('createPlayer', Object.keys(state.players))
@@ -39,23 +35,11 @@ function joinNewGame({ player_id }) {
     const games = state.games
     for (let game_id in games) {
         const game = games[game_id]
-        if (game.public && game.status === 'WAITING_FOR_PLAYERS') {
+        if (game.public && game.status === GAME_STATUS.WAITING_PLAYERS) {
             // add player logic
             // return game
         }
     }
-}
-
-function createGame({ public = true }) {
-    const id = dop.util.uuid(16)
-    const game = {
-        id,
-        public,
-        status: 'WAITING_FOR_PLAYERS',
-        players: []
-    }
-    state.games[id] = game
-    return game
 }
 
 module.exports = {
