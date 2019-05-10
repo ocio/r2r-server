@@ -12,7 +12,7 @@ function gameSubscription({ game_id }, ...args) {
     if (game === undefined) {
         throw 'Game not found'
     }
-    return game.subscription
+    return game.sub
 }
 
 module.exports = gameSubscription
