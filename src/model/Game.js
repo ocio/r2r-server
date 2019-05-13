@@ -9,6 +9,7 @@ function Game({ id, public }) {
         // [player_id]: index_id
     }
     this.sub = dop.register({
+        id,
         status: GAME_STATUS.WAITING_PLAYERS,
         players: {}
     })

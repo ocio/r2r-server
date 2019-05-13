@@ -9,7 +9,6 @@ function createPlayer({ node, nickname }) {
     const player = new Player({ id, node, nickname })
     node.player_id = id
     state.players[id] = player
-    console.log('createPlayer')
     return player
 }
 
@@ -32,7 +31,6 @@ function deletePlayer({ player_id }) {
         }
         if (!isPlaying) {
             delete state.players[player_id]
-            console.log('deletePlayer', state.players, state.games)
         }
     }
 }
@@ -69,7 +67,6 @@ function addPlayerToGame({ game, player_id }) {
         nickname: player.nickname
     })
     player.games[game.id] = player_index
-    console.log('addPlayerToGame', state.players, state.games)
     return player_index
 }
 
@@ -77,7 +74,6 @@ function deletePlayerFromGame({ game, player_id }) {
     const player = getPlayer({ player_id })
     const player_index = game.removePlayer({ player_id })
     delete player.games[player_index]
-    console.log('deletePlayerFromGame')
 }
 
 module.exports = {
