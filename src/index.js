@@ -1,3 +1,4 @@
+const dop = require('dop')
 const { onSubscribe, listen } = require('dop')
 const { deletePlayer } = require('./store/actions')
 const endpointsSubscription = require('./subscriptions/endpointsSubscription')
@@ -27,6 +28,12 @@ function report(type) {
     console.log(type)
     console.log('------------------------------------')
     const state = require('./store/state')
+    console.log('DOP:')
+    console.log({
+        nodes: Object.keys(dop.data.node).length,
+        objects: Object.keys(dop.data.object).length
+    })
+
     console.log('GAMES:')
     Object.keys(state.games).forEach(game_id => {
         const game = state.games[game_id]

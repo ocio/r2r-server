@@ -11,7 +11,10 @@ function Game({ id, public }) {
     this.sub = dop.register({
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
-        players: {}
+        players: {},
+        get players_total() {
+            return Object.keys(this.players).length
+        }
     })
 }
 

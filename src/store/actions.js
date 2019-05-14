@@ -1,8 +1,9 @@
+const { action } = require('dop')
 const { uuid } = require('../utils')
 const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
-const { GAME_STATUS } = require('../const')
+const { GAME_STATUS, GAME_MATCHMAKING } = require('../const')
 
 function createPlayer({ node, nickname }) {
     const id = 'Player_' + uuid(16, state.players)
@@ -60,21 +61,35 @@ function joinPublicGame({ player_id }) {
     return joinPublicGame({ player_id })
 }
 
-function addPlayerToGame({ game, player_id }) {
+const addPlayerToGame = action(function({ game, player_id }) {
     const player = getPlayer({ player_id })
     const player_index = game.addPlayer({
         player_id,
         nickname: player.nickname
     })
     player.games[game.id] = player_index
+    // If enough players we set the time the game will start
+    if (
+        game.sub.starts_at === undefined &&
+        game.sub.players_total >= GAME_MATCHMAKING.MIN_PLAYERS
+    ) {
+        game.sub.starts_at = Date.now() + GAME_MATCHMAKING.TIMEOUT_TO_START
+    }
     return player_index
-}
+})
 
-function deletePlayerFromGame({ game, player_id }) {
+const deletePlayerFromGame = action(function({ game, player_id }) {
     const player = getPlayer({ player_id })
     const player_index = game.removePlayer({ player_id })
+    // If not enough players we set the time the game will start
+    if (
+        game.sub.starts_at !== undefined &&
+        game.sub.players_total < GAME_MATCHMAKING.MIN_PLAYERS
+    ) {
+        delete game.sub.starts_at
+    }
     delete player.games[player_index]
-}
+})
 
 module.exports = {
     createPlayer,
