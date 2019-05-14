@@ -51,7 +51,11 @@ function joinPublicGame({ player_id }) {
     const games = state.games
     for (const game_id in games) {
         const game = games[game_id]
-        if (game.public && game.sub.status === GAME_STATUS.WAITING_PLAYERS) {
+        if (
+            game.public &&
+            game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
+            game.sub.players_total < GAME_MATCHMAKING.MAX_PLAYERS
+        ) {
             const player_index = addPlayerToGame({ game, player_id })
             return { game, player_index }
         }
@@ -91,11 +95,16 @@ const deletePlayerFromGame = action(function({ game, player_id }) {
     delete player.games[player_index]
 })
 
+function startGame({ game }) {
+    console.log('START GAME!!', game)
+    game.sub.status = GAME_STATUS.PLAYING
+}
+
 module.exports = {
     createPlayer,
     getPlayer,
     deletePlayer,
     getGame,
-    joinPublicGame
-    // addPlayer
+    joinPublicGame,
+    startGame
 }

@@ -1,10 +1,14 @@
 const dop = require('dop')
 const { onSubscribe, listen } = require('dop')
+const { startCron } = require('./cron/')
 const { deletePlayer } = require('./store/actions')
 const endpointsSubscription = require('./subscriptions/endpointsSubscription')
 const gameSubscription = require('./subscriptions/gameSubscription')
 
 const transport = listen({ port: 4444 })
+
+// startCron
+startCron()
 
 onSubscribe((...args) => {
     const { type } = args[0]
@@ -24,6 +28,9 @@ transport.on('disconnect', node => {
 })
 
 function report(type) {
+    const getFirst = o => {
+        for (let i in o) return i
+    }
     console.log('')
     console.log(type)
     console.log('------------------------------------')
@@ -33,20 +40,25 @@ function report(type) {
         nodes: Object.keys(dop.data.node).length,
         objects: Object.keys(dop.data.object).length
     })
-
+    console.log('')
     console.log('GAMES:')
     Object.keys(state.games).forEach(game_id => {
         const game = state.games[game_id]
         console.log({
             game_id,
-            players: Object.keys(game.players).length,
+            players: game.sub.players_total,
             state: game.sub.status
         })
     })
+    console.log('')
     console.log('PLAYERS:')
     Object.keys(state.players).forEach(player_id => {
         const player = state.players[player_id]
-        console.log({ player_id, games: Object.keys(player.games).length })
+        console.log({
+            player_id,
+            games: Object.keys(player.games).length,
+            game: getFirst(player.games)
+        })
     })
     console.log('-------------------------------------')
     console.log('')

@@ -12,6 +12,7 @@ function Game({ id, public }) {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
         players: {},
+        starts_at: undefined,
         get players_total() {
             return Object.keys(this.players).length
         }
