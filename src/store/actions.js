@@ -82,7 +82,7 @@ const addPlayerToGame = action(function({ game, player_id }) {
     return player_index
 })
 
-const deletePlayerFromGame = action(function({ game, player_id }) {
+const deletePlayerFromGame = action(({ game, player_id }) => {
     const player = getPlayer({ player_id })
     const player_index = game.removePlayer({ player_id })
     // If not enough players we set the time the game will start
@@ -95,10 +95,10 @@ const deletePlayerFromGame = action(function({ game, player_id }) {
     delete player.games[player_index]
 })
 
-function startGame({ game }) {
+const startGame = action(({ game }) => {
     console.log('START GAME!!', game)
     game.sub.status = GAME_STATUS.PLAYING
-}
+})
 
 module.exports = {
     createPlayer,

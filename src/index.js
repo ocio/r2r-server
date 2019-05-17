@@ -38,7 +38,9 @@ function report(type) {
     console.log('DOP:')
     console.log({
         nodes: Object.keys(dop.data.node).length,
-        objects: Object.keys(dop.data.object).length
+        objects: Object.keys(dop.data.object).length,
+        paths: Object.keys(dop.data.path).length,
+        observers: Object.keys(dop.data.observers).length
     })
     console.log('')
     console.log('GAMES:')
