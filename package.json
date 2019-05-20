@@ -4,8 +4,11 @@
     "dependencies": {
         "dop": "file:../dop"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "jest": "^24.8.0"
+    },
     "scripts": {
-        "start": "node src/index"
+        "start": "node src/index",
+        "test": "jest"
     }
 }
