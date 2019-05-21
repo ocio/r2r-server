@@ -1,5 +1,5 @@
 const Honeycomb = require('honeycomb-grid')
-const { TILE_TYPE } = require('../const')
+const { TILE_TYPE, BOARD } = require('../const')
 const { shuffle } = require('../utils')
 const Grid = Honeycomb.defineGrid()
 
@@ -41,7 +41,7 @@ function generateBoard({ maxVillages }) {
         const neighbors = calcPower({
             tiles,
             id,
-            range: 1 //Math.max(2, range - 1)
+            range: BOARD.RANGE_NEIGHBORS //Math.max(2, range - 1)
         })
         tile.power = neighbors
     }
@@ -67,19 +67,6 @@ function calcPower({ tiles, id, range }) {
             if (tile.type === TILE_TYPE.COTTAGE) cottages += 1
             else villages += 1
         })
-    // .map(hex => )
-    console.log({
-        range,
-        cottages,
-        villages,
-        type,
-        POWER:
-            (cottages * BOARD.NEIGHBORS_MULTIPLY_COTTAGE +
-                villages * BOARD.NEIGHBORS_MULTIPLY_VILLAGE) *
-            (type === TILE_TYPE.COTTAGE
-                ? BOARD.COTTAGE_MULTIPLY
-                : BOARD.VILLAGE_MULTIPLY)
-    })
     return (
         (cottages * BOARD.NEIGHBORS_MULTIPLY_COTTAGE +
             villages * BOARD.NEIGHBORS_MULTIPLY_VILLAGE) *
@@ -89,14 +76,7 @@ function calcPower({ tiles, id, range }) {
     )
 }
 
-const BOARD = {
-    NEIGHBORS_MULTIPLY_COTTAGE: 1,
-    NEIGHBORS_MULTIPLY_VILLAGE: 2,
-    COTTAGE_MULTIPLY: 1,
-    VILLAGE_MULTIPLY: 5
-}
-
-const generateBoardRecursive = ({ tiles, col, row, villages, maxVillages }) => {
+function generateBoardRecursive({ tiles, col, row, villages, maxVillages }) {
     shuffle(
         Grid.hexagon({
             radius: 1,
@@ -136,17 +116,17 @@ const generateBoardRecursive = ({ tiles, col, row, villages, maxVillages }) => {
     return tiles
 }
 
-const getUncheckedTile = tiles => {
+function getUncheckedTile(tiles) {
     for (const id in tiles) {
         if (!tiles[id].checked) return tiles[id]
     }
 }
 
-const getIdTile = hex => {
+function getIdTile(hex) {
     return `${hex.x}.${hex.y}`
 }
 
-const hasVillageNeighbors = (tiles, col, row) => {
+function hasVillageNeighbors(tiles, col, row) {
     const hexs = Grid.hexagon({
         radius: 1,
         center: [col, row]
@@ -167,4 +147,4 @@ const hasVillageNeighbors = (tiles, col, row) => {
 
 module.exports = { generateBoard }
 
-// generateBoard({ maxVillages: 2 })
+console.log(generateBoard({ maxVillages: 6 }))
