@@ -9,7 +9,13 @@ const GAME_MATCHMAKING = {
     TIMEOUT_TO_START: 30000
 }
 
+const TILE_TYPE = {
+    COTTAGE: 0,
+    VILLAGE: 1
+}
+
 module.exports = {
     GAME_STATUS,
-    GAME_MATCHMAKING
+    GAME_MATCHMAKING,
+    TILE_TYPE
 }
