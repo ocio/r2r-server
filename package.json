@@ -10,6 +10,7 @@
     },
     "scripts": {
         "start": "node src/index",
-        "test": "jest"
+        "test": "jest",
+        "testing": "jest --watch"
     }
 }
