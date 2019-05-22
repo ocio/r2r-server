@@ -1,10 +1,17 @@
 const { action } = require('dop')
-const { uuid } = require('../utils')
+const { uuid, shuffle } = require('../utils')
 const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
-const { GAME_STATUS, GAME_MATCHMAKING } = require('../const')
+const Instruction = require('../model/Instruction')
+const {
+    GAME_STATUS,
+    GAME_MATCHMAKING,
+    TILE_TYPE,
+    INSTRUCTION
+} = require('../const')
 const generateBoard = require('../rules/generateBoard')
+const getInitialUnits = require('../rules/getInitialUnits')
 const getVillagesByPlayers = require('../rules/getVillagesByPlayers')
 
 function createPlayer({ node, nickname }) {
@@ -98,12 +105,36 @@ const deletePlayerFromGame = action(({ game, player_id }) => {
 })
 
 const startGame = action(({ game }) => {
-    const players = game.players_total
-    const villages = getVillagesByPlayers({ players })
-    const board = generateBoard({ villages })
-    // console.log('START GAME!!', game, board)
+    const players = game.sub.players
+    const villages_total = getVillagesByPlayers({
+        players: game.sub.players_total
+    })
+    const board = generateBoard({ villages: villages_total })
+    const villages = shuffle(
+        Object.keys(board).filter(
+            board_id => board[board_id].type === TILE_TYPE.VILLAGE
+        )
+    )
+    // console.log('START GAME!!', game, villages)
     game.sub.status = GAME_STATUS.PLAYING
     game.sub.board = board
+    let index = 0
+    for (const player_id in players) {
+        const tile_id = villages[index]
+        game.addInstruction(
+            Instruction({
+                type: INSTRUCTION.CONQUER,
+                data: { player_id, tile_id }
+            })
+        )
+        game.addInstruction(
+            Instruction({
+                type: INSTRUCTION.ADD,
+                data: { player_id, tile_id, units: getInitialUnits() }
+            })
+        )
+        index += 1
+    }
 })
 
 module.exports = {

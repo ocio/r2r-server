@@ -8,6 +8,7 @@ function Game({ id, public }) {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
         players: {},
+        instructions: [],
         starts_at: undefined,
         get players_total() {
             return Object.keys(this.players).length
@@ -29,6 +30,9 @@ function Game({ id, public }) {
             delete players[player_id]
             delete sub.players[index]
             return index
+        },
+        addInstruction: instruction => {
+            sub.instructions.push(instruction)
         }
     }
 }

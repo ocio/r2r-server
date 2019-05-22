@@ -22,9 +22,15 @@ const BOARD = {
     VILLAGE_MULTIPLY: 5
 }
 
+const INSTRUCTION = {
+    CONQUER: 0, // when troops conquer a tile
+    ADD: 1 // add units
+}
+
 module.exports = {
     GAME_STATUS,
     GAME_MATCHMAKING,
     TILE_TYPE,
-    BOARD
+    BOARD,
+    INSTRUCTION
 }
