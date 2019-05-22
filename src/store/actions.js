@@ -4,6 +4,8 @@ const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
 const { GAME_STATUS, GAME_MATCHMAKING } = require('../const')
+const generateBoard = require('../rules/generateBoard')
+const getVillagesByPlayers = require('../rules/getVillagesByPlayers')
 
 function createPlayer({ node, nickname }) {
     const id = 'Player_' + uuid(16, state.players)
@@ -96,8 +98,12 @@ const deletePlayerFromGame = action(({ game, player_id }) => {
 })
 
 const startGame = action(({ game }) => {
-    console.log('START GAME!!', game)
+    const players = game.players_total
+    const villages = getVillagesByPlayers({ players })
+    const board = generateBoard({ villages })
+    // console.log('START GAME!!', game, board)
     game.sub.status = GAME_STATUS.PLAYING
+    game.sub.board = board
 })
 
 module.exports = {

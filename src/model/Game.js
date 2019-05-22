@@ -10,10 +10,9 @@ function Game({ id, public }) {
         players: {},
         starts_at: undefined,
         get players_total() {
-            return Object.keys(players).length
+            return Object.keys(this.players).length
         }
     })
-
     return {
         id,
         public,
@@ -25,7 +24,6 @@ function Game({ id, public }) {
             sub.players[index] = { nickname }
             return index
         },
-
         removePlayer: ({ player_id }) => {
             const index = players[player_id]
             delete players[player_id]

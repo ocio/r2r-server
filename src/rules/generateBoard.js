@@ -4,13 +4,13 @@ const { shuffle } = require('../utils')
 const Tile = require('../model/Tile')
 const Grid = Honeycomb.defineGrid()
 
-function generateBoard({ maxVillages }) {
+function generateBoard({ villages = 0 }) {
     const tiles = generateBoardRecursive({
         tiles: {},
         col: 0,
         row: 0,
-        villages: 0,
-        maxVillages
+        villages_inc: 0,
+        villages
     })
     let range = 0
     for (const id in tiles) {
@@ -25,12 +25,12 @@ function generateBoard({ maxVillages }) {
                 const max = Math.max(Math.abs(hex.x), Math.abs(hex.y))
                 if (max > range) range = max
                 if (tiles[id] === undefined) {
-                    tiles[id] = {
+                    tiles[id] = Tile({
                         id,
                         col: hex.x,
                         row: hex.y,
                         type: TILE_TYPE.COTTAGE
-                    }
+                    })
                 }
             })
         }
@@ -53,7 +53,7 @@ function generateBoard({ maxVillages }) {
 function calcPower({ tiles, id, range }) {
     const { col, row, type } = tiles[id]
     let cottages = 0
-    let villages = 0
+    let villages_inc = 0
     Grid.hexagon({
         radius: range,
         center: [col, row]
@@ -66,18 +66,18 @@ function calcPower({ tiles, id, range }) {
         .forEach(hex => {
             const tile = tiles[getIdTile(hex)]
             if (tile.type === TILE_TYPE.COTTAGE) cottages += 1
-            else villages += 1
+            else villages_inc += 1
         })
     return (
         (cottages * BOARD.COTTAGE_MULTIPLY_NEIGHBORS +
-            villages * BOARD.VILLAGE_MULTIPLY_NEIGHBORS) *
+            villages_inc * BOARD.VILLAGE_MULTIPLY_NEIGHBORS) *
         (type === TILE_TYPE.COTTAGE
             ? BOARD.COTTAGE_MULTIPLY
             : BOARD.VILLAGE_MULTIPLY)
     )
 }
 
-function generateBoardRecursive({ tiles, col, row, villages, maxVillages }) {
+function generateBoardRecursive({ tiles, col, row, villages_inc, villages }) {
     shuffle(
         Grid.hexagon({
             radius: 1,
@@ -87,31 +87,30 @@ function generateBoardRecursive({ tiles, col, row, villages, maxVillages }) {
         const id = getIdTile(hex)
         if (tiles[id] === undefined) {
             const type =
-                villages >= maxVillages ||
+                villages_inc >= villages ||
                 hasVillageNeighbors(tiles, hex.x, hex.y)
                     ? TILE_TYPE.COTTAGE
                     : TILE_TYPE.VILLAGE
-            tiles[id] = {
+            tiles[id] = Tile({
                 id,
-                checked: false,
                 col: hex.x,
                 row: hex.y,
                 type
-            }
-            if (type === TILE_TYPE.VILLAGE) villages += 1
+            })
+            if (type === TILE_TYPE.VILLAGE) villages_inc += 1
         }
         if (hex.x === col && hex.y === row) {
             tiles[id].checked = true
         }
     })
-    if (villages < maxVillages) {
+    if (villages_inc < villages) {
         const tile = getUncheckedTile(tiles)
         return generateBoardRecursive({
             tiles,
             col: tile.col,
             row: tile.row,
-            villages,
-            maxVillages
+            villages_inc,
+            villages
         })
     }
     return tiles
@@ -148,4 +147,4 @@ function hasVillageNeighbors(tiles, col, row) {
 
 module.exports = generateBoard
 
-// console.log(generateBoard({ maxVillages: 6 }))
+// console.log(generateBoard({ villages: 6 }))
