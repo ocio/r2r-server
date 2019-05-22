@@ -1,6 +1,7 @@
 const Honeycomb = require('honeycomb-grid')
 const { TILE_TYPE, BOARD } = require('../const')
 const { shuffle } = require('../utils')
+const Tile = require('../model/Tile')
 const Grid = Honeycomb.defineGrid()
 
 function generateBoard({ maxVillages }) {
@@ -68,8 +69,8 @@ function calcPower({ tiles, id, range }) {
             else villages += 1
         })
     return (
-        (cottages * BOARD.NEIGHBORS_MULTIPLY_COTTAGE +
-            villages * BOARD.NEIGHBORS_MULTIPLY_VILLAGE) *
+        (cottages * BOARD.COTTAGE_MULTIPLY_NEIGHBORS +
+            villages * BOARD.VILLAGE_MULTIPLY_NEIGHBORS) *
         (type === TILE_TYPE.COTTAGE
             ? BOARD.COTTAGE_MULTIPLY
             : BOARD.VILLAGE_MULTIPLY)
@@ -145,6 +146,6 @@ function hasVillageNeighbors(tiles, col, row) {
     return false
 }
 
-module.exports = { generateBoard }
+module.exports = generateBoard
 
-console.log(generateBoard({ maxVillages: 6 }))
+// console.log(generateBoard({ maxVillages: 6 }))

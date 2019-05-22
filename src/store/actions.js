@@ -7,7 +7,7 @@ const { GAME_STATUS, GAME_MATCHMAKING } = require('../const')
 
 function createPlayer({ node, nickname }) {
     const id = 'Player_' + uuid(16, state.players)
-    const player = new Player({ id, node, nickname })
+    const player = Player({ id, node, nickname })
     node.player_id = id
     state.players[id] = player
     return player
@@ -38,7 +38,7 @@ function deletePlayer({ player_id }) {
 
 function createGame() {
     const id = 'Game_' + uuid(16, state.games)
-    const game = new Game({ id, public: true })
+    const game = Game({ id, public: true })
     state.games[id] = game
     return game
 }
