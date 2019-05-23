@@ -23,7 +23,7 @@ const BOARD = {
 }
 
 const INSTRUCTION = {
-    CONQUER: 0, // when troops conquer a tile
+    CONQUEST: 0, // when troops CONQUEST a tile
     ADD: 1 // add units
 }
 

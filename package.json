@@ -1,5 +1,5 @@
 {
-    "name": "r2r-server",
+    "name": "runandrisk-server",
     "version": "1.0.0",
     "dependencies": {
         "dop": "file:../dop",

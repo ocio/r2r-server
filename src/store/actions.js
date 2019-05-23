@@ -123,7 +123,7 @@ const startGame = action(({ game }) => {
         const tile_id = villages[index]
         game.addInstruction(
             Instruction({
-                type: INSTRUCTION.CONQUER,
+                type: INSTRUCTION.CONQUEST,
                 data: { player_id, tile_id }
             })
         )
