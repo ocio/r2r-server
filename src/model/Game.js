@@ -1,6 +1,6 @@
 const dop = require('dop')
 const { GAME_STATUS } = require('runandrisk-common/const')
-const { uuid } = require('../utils')
+const { uuid } = require('runandrisk-common/utils')
 
 function Game({ id, public }) {
     const players = {}

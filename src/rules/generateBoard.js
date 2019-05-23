@@ -1,7 +1,7 @@
 const Honeycomb = require('honeycomb-grid')
 const { BOARD } = require('../const/parameters')
 const { TILE } = require('runandrisk-common/const')
-const { shuffle } = require('../utils')
+const { shuffle } = require('runandrisk-common/utils')
 const Tile = require('../model/Tile')
 const Grid = Honeycomb.defineGrid()
 

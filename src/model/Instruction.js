@@ -1,4 +1,4 @@
-const { now } = require('../utils')
+const { now } = require('runandrisk-common/utils')
 
 function Instruction({ type, data }) {
     return [now(), type, data]

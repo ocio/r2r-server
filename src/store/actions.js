@@ -1,5 +1,5 @@
 const { action } = require('dop')
-const { uuid, shuffle } = require('../utils')
+const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
@@ -82,7 +82,7 @@ const addPlayerToGame = action(function({ game, player_id }) {
         game.sub.starts_at === undefined &&
         game.sub.players_total >= GAME_MATCHMAKING.MIN_PLAYERS
     ) {
-        game.sub.starts_at = Date.now() + GAME_MATCHMAKING.TIMEOUT_TO_START
+        game.sub.starts_at = now() + GAME_MATCHMAKING.TIMEOUT_TO_START
     }
     return player_index
 })
@@ -106,17 +106,19 @@ const startGame = action(({ game }) => {
         players: game.sub.players_total
     })
     const board = generateBoard({ villages: villages_total })
-    const villages = shuffle(
-        Object.keys(board).filter(
-            board_id => board[board_id].type === TILE.VILLAGE
-        )
+    const villages = sortByCount(
+        Object.keys(board)
+            .filter(board_id => board[board_id].type === TILE.VILLAGE)
+            .map(board_id => board[board_id]),
+        'power'
     )
-    // console.log('START GAME!!', game, villages)
+    // console.log('START GAME!!', villages)
     game.sub.status = GAME_STATUS.PLAYING
     game.sub.board = board
     let index = 0
     for (const player_id in players) {
-        const tile_id = villages[index]
+        const village = villages[index]
+        const tile_id = village.id
         game.addInstruction(
             Instruction({
                 type: INSTRUCTION.CONQUEST,

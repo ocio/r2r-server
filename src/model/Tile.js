@@ -1,6 +1,6 @@
 function Tile({ id, col, row, type }) {
     return {
-        // id,
+        id,
         col,
         row,
         type
