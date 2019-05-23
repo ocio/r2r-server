@@ -4,12 +4,8 @@ const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Instruction = require('../model/Instruction')
-const {
-    GAME_STATUS,
-    GAME_MATCHMAKING,
-    TILE_TYPE,
-    INSTRUCTION
-} = require('../const')
+const { TILE, INSTRUCTION, GAME_STATUS } = require('runandrisk-common/const')
+const { GAME_MATCHMAKING } = require('../const/parameters')
 const generateBoard = require('../rules/generateBoard')
 const getInitialUnits = require('../rules/getInitialUnits')
 const getVillagesByPlayers = require('../rules/getVillagesByPlayers')
@@ -112,7 +108,7 @@ const startGame = action(({ game }) => {
     const board = generateBoard({ villages: villages_total })
     const villages = shuffle(
         Object.keys(board).filter(
-            board_id => board[board_id].type === TILE_TYPE.VILLAGE
+            board_id => board[board_id].type === TILE.VILLAGE
         )
     )
     // console.log('START GAME!!', game, villages)

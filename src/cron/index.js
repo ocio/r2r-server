@@ -1,5 +1,6 @@
+const { GAME_STATUS } = require('runandrisk-common/const')
+const { GAME_MATCHMAKING } = require('../const/parameters')
 const state = require('../store/state')
-const { GAME_STATUS, GAME_MATCHMAKING } = require('../const')
 const { startGame } = require('../store/actions')
 
 function startCron() {

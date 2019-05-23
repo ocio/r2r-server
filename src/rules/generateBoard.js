@@ -1,5 +1,6 @@
 const Honeycomb = require('honeycomb-grid')
-const { TILE_TYPE, BOARD } = require('../const')
+const { BOARD } = require('../const/parameters')
+const { TILE } = require('runandrisk-common/const')
 const { shuffle } = require('../utils')
 const Tile = require('../model/Tile')
 const Grid = Honeycomb.defineGrid()
@@ -16,7 +17,7 @@ function generateBoard({ villages = 0 }) {
     for (const id in tiles) {
         const tile = tiles[id]
         delete tile.checked
-        if (tile.type === TILE_TYPE.VILLAGE) {
+        if (tile.type === TILE.VILLAGE) {
             Grid.hexagon({
                 radius: 1,
                 center: [tile.col, tile.row]
@@ -29,7 +30,7 @@ function generateBoard({ villages = 0 }) {
                         id,
                         col: hex.x,
                         row: hex.y,
-                        type: TILE_TYPE.COTTAGE
+                        type: TILE.COTTAGE
                     })
                 }
             })
@@ -65,13 +66,13 @@ function calcPower({ tiles, id, range }) {
         )
         .forEach(hex => {
             const tile = tiles[getIdTile(hex)]
-            if (tile.type === TILE_TYPE.COTTAGE) cottages += 1
+            if (tile.type === TILE.COTTAGE) cottages += 1
             else villages_inc += 1
         })
     return (
         (cottages * BOARD.COTTAGE_MULTIPLY_NEIGHBORS +
             villages_inc * BOARD.VILLAGE_MULTIPLY_NEIGHBORS) *
-        (type === TILE_TYPE.COTTAGE
+        (type === TILE.COTTAGE
             ? BOARD.COTTAGE_MULTIPLY
             : BOARD.VILLAGE_MULTIPLY)
     )
@@ -89,15 +90,15 @@ function generateBoardRecursive({ tiles, col, row, villages_inc, villages }) {
             const type =
                 villages_inc >= villages ||
                 hasVillageNeighbors(tiles, hex.x, hex.y)
-                    ? TILE_TYPE.COTTAGE
-                    : TILE_TYPE.VILLAGE
+                    ? TILE.COTTAGE
+                    : TILE.VILLAGE
             tiles[id] = Tile({
                 id,
                 col: hex.x,
                 row: hex.y,
                 type
             })
-            if (type === TILE_TYPE.VILLAGE) villages_inc += 1
+            if (type === TILE.VILLAGE) villages_inc += 1
         }
         if (hex.x === col && hex.y === row) {
             tiles[id].checked = true
@@ -136,7 +137,7 @@ function hasVillageNeighbors(tiles, col, row) {
         const id = getIdTile(hex)
         if (
             tiles[id] !== undefined &&
-            tiles[id].type === TILE_TYPE.VILLAGE &&
+            tiles[id].type === TILE.VILLAGE &&
             !(hex.x === col && hex.y === row)
         ) {
             return true
