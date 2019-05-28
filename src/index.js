@@ -19,12 +19,12 @@ onSubscribe((...args) => {
 })
 
 transport.on('message', (node, message) => {
-    report('(onmessage) ' + node.player_id + ' ' + message)
+    // report('(onmessage) ' + node.player_id + ' ' + message)
 })
 
 transport.on('disconnect', node => {
     deletePlayer({ player_id: node.player_id })
-    report('(ondisconnect) ' + node.player_id)
+    // report('(ondisconnect) ' + node.player_id)
 })
 
 function report(type) {
@@ -38,7 +38,7 @@ function report(type) {
     console.log('DOP:')
     console.log({
         nodes: Object.keys(dop.data.node).length,
-        objects: Object.keys(dop.data.object).length,
+        // objects: Object.keys(dop.data.object).length,
         paths: Object.keys(dop.data.path).length,
         observers: Object.keys(dop.data.observers).length
     })

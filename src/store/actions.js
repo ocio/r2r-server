@@ -1,4 +1,4 @@
-const { action } = require('dop')
+const { action, getObjectParent } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const Player = require('../model/Player')
@@ -101,9 +101,10 @@ const deletePlayerFromGame = action(({ game, player_id }) => {
 })
 
 const startGame = action(({ game }) => {
-    const players = game.sub.players
+    const sub = game.sub
+    const players = sub.players
     const villages_total = getVillagesByPlayers({
-        players: game.sub.players_total
+        players: sub.players_total
     })
     const board = generateBoard({ villages: villages_total })
     const villages = sortByCount(
@@ -113,8 +114,8 @@ const startGame = action(({ game }) => {
         'power'
     )
     // console.log('START GAME!!', villages)
-    game.sub.status = GAME_STATUS.PLAYING
-    game.sub.board = board
+    sub.status = GAME_STATUS.PLAYING
+    sub.board = board
     let index = 0
     for (const player_id in players) {
         const village = villages[index]
@@ -122,18 +123,46 @@ const startGame = action(({ game }) => {
         game.addInstruction(
             Instruction({
                 type: INSTRUCTION.CONQUEST,
-                data: { player_id, tile_id }
+                data: {
+                    player_id,
+                    tile_id
+                }
             })
         )
         game.addInstruction(
             Instruction({
                 type: INSTRUCTION.ADD,
-                data: { player_id, tile_id, units: getInitialUnits() }
+                data: {
+                    player_id,
+                    tile_id,
+                    units: getInitialUnits()
+                }
             })
         )
         index += 1
     }
-})
+}, filterInstructions)
+
+function getPlayerIdByPlayerIndex({ game_id, player_index }) {
+    const game = state.games[game_id]
+    for (const player_id in game.players)
+        if (game.players[player_id] === player_index) return player_id
+}
+
+function filterInstructions(mutations, node) {
+    return mutations.filter(m => {
+        if (m.prop === 'instructions' && m.splice[2].type === INSTRUCTION.ADD) {
+            const { id } = getObjectParent(m.object) // this gets the game.sub object
+            const data = m.splice[2].data
+            const player_id = getPlayerIdByPlayerIndex({
+                game_id: id,
+                player_index: data.player_id
+            })
+            return state.players[player_id].node === node.token
+        }
+        return true
+    })
+}
 
 module.exports = {
     createPlayer,
