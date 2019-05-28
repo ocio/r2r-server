@@ -20,7 +20,7 @@ function launchGames() {
             game.sub.players_total >= GAME_MATCHMAKING.MIN_PLAYERS &&
             game.sub.starts_at - n < 0
         ) {
-            startGame({ game })
+            startGame({ game_id })
         }
     }
 }

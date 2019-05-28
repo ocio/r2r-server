@@ -3,8 +3,7 @@ const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
-const Instruction = require('../model/Instruction')
-const { TILE, INSTRUCTION, GAME_STATUS } = require('runandrisk-common/const')
+const { TILE, GAME_STATUS } = require('runandrisk-common/const')
 const { GAME_MATCHMAKING } = require('../const/parameters')
 const generateBoard = require('../rules/generateBoard')
 const getInitialUnits = require('../rules/getInitialUnits')
@@ -100,7 +99,8 @@ const deletePlayerFromGame = action(({ game, player_id }) => {
     delete player.games[player_index]
 })
 
-const startGame = action(({ game }) => {
+const startGame = ({ game_id }) => {
+    const game = state.games[game_id]
     const sub = game.sub
     const players = sub.players
     const villages_total = getVillagesByPlayers({
@@ -114,34 +114,39 @@ const startGame = action(({ game }) => {
         'power'
     )
     // console.log('START GAME!!', villages)
-    sub.status = GAME_STATUS.PLAYING
-    sub.board = board
+
+    action(() => {
+        sub.status = GAME_STATUS.PLAYING
+        sub.board = board
+    })()
+
     let index = 0
-    for (const player_id in players) {
-        const village = villages[index]
-        const tile_id = village.id
-        game.addInstruction(
-            Instruction({
-                type: INSTRUCTION.CONQUEST,
-                data: {
-                    player_id,
-                    tile_id
-                }
+    action(() => {
+        for (const player_id in players) {
+            const village = villages[index++]
+            const tile_id = village.id
+            changeTileOwner({ game_id, tile_id, player_id })
+            changeTileUnits({
+                game_id,
+                tile_id,
+                player_id,
+                units: getInitialUnits()
             })
-        )
-        game.addInstruction(
-            Instruction({
-                type: INSTRUCTION.ADD,
-                data: {
-                    player_id,
-                    tile_id,
-                    units: getInitialUnits()
-                }
-            })
-        )
-        index += 1
-    }
-}, filterInstructions)
+        }
+    })()
+}
+
+const changeTileOwner = action(({ game_id, tile_id, player_id }) => {
+    const game = state.games[game_id]
+    const board = game.sub.board
+    board[tile_id].owner = player_id
+})
+
+const changeTileUnits = action(({ game_id, tile_id, player_id, units }) => {
+    const game = state.games[game_id]
+    const board = game.sub.board
+    board[tile_id].units[player_id] = units
+})
 
 function getPlayerIdByPlayerIndex({ game_id, player_index }) {
     const game = state.games[game_id]
@@ -150,16 +155,18 @@ function getPlayerIdByPlayerIndex({ game_id, player_index }) {
 }
 
 function filterInstructions(mutations, node) {
+    // console.log(mutations.length)
     return mutations.filter(m => {
-        if (m.prop === 'instructions' && m.splice[2].type === INSTRUCTION.ADD) {
-            const { id } = getObjectParent(m.object) // this gets the game.sub object
-            const data = m.splice[2].data
-            const player_id = getPlayerIdByPlayerIndex({
-                game_id: id,
-                player_index: data.player_id
-            })
-            return state.players[player_id].node === node.token
-        }
+        console.log(m.prop, m.value)
+        // if (m.prop === 'instructions' && m.splice[2].type === INSTRUCTION.ADD) {
+        //     const { id } = getObjectParent(m.object) // this gets the game.sub object
+        //     const data = m.splice[2].data
+        //     const player_id = getPlayerIdByPlayerIndex({
+        //         game_id: id,
+        //         player_index: data.player_id
+        //     })
+        //     return state.players[player_id].node === node.token
+        // }
         return true
     })
 }
