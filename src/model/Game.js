@@ -1,10 +1,9 @@
-const dop = require('dop')
 const { GAME_STATUS } = require('runandrisk-common/const')
 const { uuid } = require('runandrisk-common/utils')
 
 function Game({ id, public }) {
     const players = {}
-    const sub = dop.register({
+    const sub = {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
         players: {},
@@ -12,7 +11,7 @@ function Game({ id, public }) {
         get players_total() {
             return Object.keys(this.players).length
         }
-    })
+    }
     return {
         id,
         public,

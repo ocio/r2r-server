@@ -1,4 +1,4 @@
-const { action, getObjectParent } = require('dop')
+const { register, action } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const Player = require('../model/Player')
@@ -43,6 +43,7 @@ function deletePlayer({ player_id }) {
 function createGame() {
     const id = 'Game_' + uuid(16, state.games)
     const game = Game({ id, public: true })
+    game.sub = register(game.sub)
     state.games[id] = game
     return game
 }
@@ -126,7 +127,7 @@ const startGame = ({ game_id }) => {
             const village = villages[index++]
             const tile_id = village.id
             changeTileOwner({ game_id, tile_id, player_id })
-            changeTileUnits({
+            addTileUnits({
                 game_id,
                 tile_id,
                 player_id,
@@ -142,34 +143,15 @@ const changeTileOwner = action(({ game_id, tile_id, player_id }) => {
     board[tile_id].owner = player_id
 })
 
-const changeTileUnits = action(({ game_id, tile_id, player_id, units }) => {
+const addTileUnits = action(({ game_id, tile_id, player_id, units }) => {
     const game = state.games[game_id]
     const board = game.sub.board
-    board[tile_id].units[player_id] = units
+    if (board[tile_id].units[player_id] === undefined) {
+        board[tile_id].units[player_id] = units
+    } else {
+        board[tile_id].units[player_id] += units
+    }
 })
-
-function getPlayerIdByPlayerIndex({ game_id, player_index }) {
-    const game = state.games[game_id]
-    for (const player_id in game.players)
-        if (game.players[player_id] === player_index) return player_id
-}
-
-function filterInstructions(mutations, node) {
-    // console.log(mutations.length)
-    return mutations.filter(m => {
-        console.log(m.prop, m.value)
-        // if (m.prop === 'instructions' && m.splice[2].type === INSTRUCTION.ADD) {
-        //     const { id } = getObjectParent(m.object) // this gets the game.sub object
-        //     const data = m.splice[2].data
-        //     const player_id = getPlayerIdByPlayerIndex({
-        //         game_id: id,
-        //         player_index: data.player_id
-        //     })
-        //     return state.players[player_id].node === node.token
-        // }
-        return true
-    })
-}
 
 module.exports = {
     createPlayer,

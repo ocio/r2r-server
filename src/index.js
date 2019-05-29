@@ -5,8 +5,9 @@ const { deletePlayer } = require('./store/actions')
 const endpointsSubscription = require('./subscriptions/endpointsSubscription')
 const gameSubscription = require('./subscriptions/gameSubscription')
 
-const transport = listen({ port: 4444 })
-
+const port = 4444
+const transport = listen({ port })
+console.log({ port })
 // startCron
 startCron()
 

@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "dependencies": {
         "dop": "file:../dop",
-        "honeycomb-grid": "^2.0.1",
         "runandrisk-common": "file:../runandrisk-common"
     },
     "devDependencies": {
