@@ -1,4 +1,3 @@
-// used by /endpoints & /subscriptions
 const { getPlayerFromArgs, getGame } = require('./store/getters')
 
 function isLogged(f) {
@@ -16,4 +15,15 @@ function isValidGame(f) {
     }
 }
 
-module.exports = { isLogged, isValidGame }
+function isPlayerInGame(f) {
+    return (...args) => {
+        const player = getPlayerFromArgs(args)
+        const { game_id } = args[0]
+        const game = getGame({ game_id })
+        if (game.players[player.id] === undefined)
+            throw 'Player not found in this game'
+        return f(...args)
+    }
+}
+
+module.exports = { isLogged, isValidGame, isPlayerInGame }
