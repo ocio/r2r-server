@@ -133,14 +133,14 @@ const changeTileUnits = action(({ game_id, tile_id, player_id, units }) => {
     const game = state.games[game_id]
     const board = game.sub.board
     const tile = board[tile_id]
-    if (tile.units[player_id] === undefined) {
-        tile.units[player_id] = { units, index: tile.owner_index++ }
+    if (tile.owner[player_id] === undefined) {
+        tile.owner[player_id] = { units, index: tile.owner_index++ }
     } else {
-        const new_units = (tile.units[player_id].units += units)
+        const new_units = (tile.owner[player_id].units += units)
         if (new_units > 0) {
-            tile.units[player_id].units = new_units
+            tile.owner[player_id].units = new_units
         } else {
-            delete tile.units[player_id]
+            delete tile.owner[player_id]
         }
     }
 })
