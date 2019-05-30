@@ -1,6 +1,7 @@
 const { register, action } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
+const { getGame, getPlayer } = require('./getters')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
@@ -15,10 +16,6 @@ function createPlayer({ node, nickname }) {
     node.player_id = id
     state.players[id] = player
     return player
-}
-
-function getPlayer({ player_id }) {
-    return state.players[player_id]
 }
 
 function deletePlayer({ player_id }) {
@@ -46,10 +43,6 @@ function createGame() {
     game.sub = register(game.sub)
     state.games[id] = game
     return game
-}
-
-function getGame({ game_id }) {
-    return state.games[game_id]
 }
 
 function joinPublicGame({ player_id }) {
@@ -155,9 +148,7 @@ const addTileUnits = action(({ game_id, tile_id, player_id, units }) => {
 
 module.exports = {
     createPlayer,
-    getPlayer,
     deletePlayer,
-    getGame,
     joinPublicGame,
     startGame
 }
