@@ -119,8 +119,7 @@ const startGame = ({ game_id }) => {
         for (const player_id in players) {
             const village = villages[index++]
             const tile_id = village.id
-            changeTileOwner({ game_id, tile_id, player_id })
-            addTileUnits({
+            changeTileUnits({
                 game_id,
                 tile_id,
                 player_id,
@@ -130,19 +129,19 @@ const startGame = ({ game_id }) => {
     })()
 }
 
-const changeTileOwner = action(({ game_id, tile_id, player_id }) => {
+const changeTileUnits = action(({ game_id, tile_id, player_id, units }) => {
     const game = state.games[game_id]
     const board = game.sub.board
-    board[tile_id].owner = player_id
-})
-
-const addTileUnits = action(({ game_id, tile_id, player_id, units }) => {
-    const game = state.games[game_id]
-    const board = game.sub.board
-    if (board[tile_id].units[player_id] === undefined) {
-        board[tile_id].units[player_id] = units
+    const tile = board[tile_id]
+    if (tile.units[player_id] === undefined) {
+        tile.units[player_id] = { units, index: tile.owner_index++ }
     } else {
-        board[tile_id].units[player_id] += units
+        const new_units = (tile.units[player_id].units += units)
+        if (new_units > 0) {
+            tile.units[player_id].units = new_units
+        } else {
+            delete tile.units[player_id]
+        }
     }
 })
 
