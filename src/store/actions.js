@@ -63,7 +63,7 @@ function joinPublicGame({ player_id }) {
     return joinPublicGame({ player_id })
 }
 
-const addPlayerToGame = action(function({ game, player_id }) {
+const addPlayerToGame = action(({ game, player_id }) => {
     const player = getPlayer({ player_id })
     const player_index = game.addPlayer({
         player_id,
@@ -116,31 +116,31 @@ const startGame = ({ game_id }) => {
 
     let index = 0
     action(() => {
-        for (const player_id in players) {
+        for (const player_index in players) {
             const village = villages[index++]
             const tile_id = village.id
             changeTileUnits({
                 game_id,
                 tile_id,
-                player_id,
+                player_index,
                 units: getInitialUnits()
             })
         }
     })()
 }
 
-const changeTileUnits = action(({ game_id, tile_id, player_id, units }) => {
+const changeTileUnits = action(({ game_id, tile_id, player_index, units }) => {
     const game = state.games[game_id]
     const board = game.sub.board
     const tile = board[tile_id]
-    if (tile.owner[player_id] === undefined) {
-        tile.owner[player_id] = { units, index: tile.owner_index++ }
+    if (tile.owner[player_index] === undefined) {
+        tile.owner[player_index] = { units, index: tile.owner_index++ }
     } else {
-        const new_units = (tile.owner[player_id].units += units)
+        const new_units = tile.owner[player_index].units + units
         if (new_units > 0) {
-            tile.owner[player_id].units = new_units
+            tile.owner[player_index].units = new_units
         } else {
-            delete tile.owner[player_id]
+            delete tile.owner[player_index]
         }
     }
 })
@@ -149,5 +149,6 @@ module.exports = {
     createPlayer,
     deletePlayer,
     joinPublicGame,
-    startGame
+    startGame,
+    changeTileUnits
 }

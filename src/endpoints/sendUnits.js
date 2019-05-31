@@ -1,5 +1,7 @@
+const { action } = require('dop')
 const { isLogged, isValidGame, isPlayerInGame } = require('../validators')
 const { getPlayerFromArgs, getGame } = require('../store/getters')
+const { changeTileUnits } = require('../store/actions')
 const { distance } = require('runandrisk-common/board')
 
 function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
@@ -37,7 +39,19 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
     if (units > units_availables) {
         throw 'Not enough units to send'
     }
+    changeTileUnits({
+        game_id,
+        tile_id: tile_id_from,
+        player_index,
+        units: -units
+    })
+    changeTileUnits({
+        game_id,
+        tile_id: tile_id_to,
+        player_index,
+        units: units
+    })
     return { tile_id_from, tile_id_to, units, units_availables }
 }
 
-module.exports = isLogged(isValidGame(isPlayerInGame(sendUnits)))
+module.exports = action(isLogged(isValidGame(isPlayerInGame(sendUnits))))
