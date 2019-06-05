@@ -2,6 +2,7 @@
     "name": "runandrisk-server",
     "version": "1.0.0",
     "dependencies": {
+        "js-combinatorics": "^0.5.4",
         "dop": "file:../dop",
         "runandrisk-common": "file:../runandrisk-common"
     },
