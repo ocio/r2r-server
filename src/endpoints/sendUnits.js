@@ -1,7 +1,7 @@
-const { action } = require('dop')
+// const { action } = require('dop')
 const { isLogged, isValidGame, isPlayerInGame } = require('../validators')
 const { getPlayerFromArgs, getGame } = require('../store/getters')
-const { changeTileUnits } = require('../store/actions')
+const { changeTileUnits, createTroops } = require('../store/actions')
 const { distance } = require('runandrisk-common/board')
 
 function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
@@ -45,13 +45,20 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
         player_index,
         units: -units
     })
-    changeTileUnits({
+    createTroops({
         game_id,
-        tile_id: tile_id_to,
         player_index,
-        units: units
+        tile_id_from,
+        tile_id_to,
+        units
     })
-    return { tile_id_from, tile_id_to, units, units_availables }
+    // changeTileUnits({
+    //     game_id,
+    //     tile_id: tile_id_to,
+    //     player_index,
+    //     units: units
+    // })
+    return true
 }
 
-module.exports = action(isLogged(isValidGame(isPlayerInGame(sendUnits))))
+module.exports = isLogged(isValidGame(isPlayerInGame(sendUnits)))

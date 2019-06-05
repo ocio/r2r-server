@@ -4,11 +4,15 @@ const state = require('./state')
 const { getGame, getPlayer } = require('./getters')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
+const Troop = require('../model/Troop')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
 const { GAME_MATCHMAKING } = require('../const/parameters')
-const generateBoard = require('../rules/generateBoard')
-const getInitialUnits = require('../rules/getInitialUnits')
-const getVillagesByPlayers = require('../rules/getVillagesByPlayers')
+const {
+    generateBoard,
+    getInitialUnits,
+    getVillagesByPlayers,
+    troopsArrivesAt
+} = require('../rules')
 
 function createPlayer({ node, nickname }) {
     const id = 'Player_' + uuid(16, state.players)
@@ -145,10 +149,31 @@ const changeTileUnits = action(({ game_id, tile_id, player_index, units }) => {
     }
 })
 
+const createTroops = action(
+    ({ game_id, player_index, tile_id_from, tile_id_to, units }) => {
+        const game = state.games[game_id]
+        const id = 'Troop_' + uuid(16, game.sub.troops)
+        const leaves_at = now()
+        const arrives_at = troopsArrivesAt({ leaves_at })
+        const troop = Troop({
+            id,
+            player_index,
+            tile_id_from,
+            tile_id_to,
+            units,
+            leaves_at,
+            arrives_at
+        })
+        game.sub.troops[id] = troop
+        // console.log(game.sub.troops)
+    }
+)
+
 module.exports = {
     createPlayer,
     deletePlayer,
     joinPublicGame,
     startGame,
-    changeTileUnits
+    changeTileUnits,
+    createTroops
 }

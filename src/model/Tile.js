@@ -6,7 +6,7 @@ function Tile({ id, col, row, type }) {
         type,
         owner_index: 0,
         owner: {
-            // [<player_id]: {units:1000, index:0}
+            // [<player_index]: {units:1000, index:0}
         }
     }
 }

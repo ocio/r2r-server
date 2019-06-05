@@ -6,6 +6,7 @@ function Game({ id, public }) {
     const sub = {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
+        troops: {},
         players: {},
         starts_at: undefined,
         get players_total() {
