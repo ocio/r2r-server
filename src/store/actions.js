@@ -169,11 +169,17 @@ const createTroops = action(
     }
 )
 
+const deleteTroops = action(({ game_id, troop_id }) => {
+    const game = state.games[game_id]
+    delete game.sub.troops[troop_id]
+})
+
 module.exports = {
     createPlayer,
     deletePlayer,
     joinPublicGame,
     startGame,
     changeTileUnits,
-    createTroops
+    createTroops,
+    deleteTroops
 }

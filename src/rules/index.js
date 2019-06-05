@@ -19,7 +19,7 @@ function getInitialUnits() {
 }
 
 function troopsArrivesAt({ leaves_at }) {
-    return leaves_at + 30
+    return leaves_at + 5
 }
 
 module.exports = {
