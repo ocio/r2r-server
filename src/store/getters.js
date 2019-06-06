@@ -14,6 +14,21 @@ function getPlayerFromArgs(args) {
     return getPlayer({ player_id })
 }
 
+function getOwnerFromTile({ game_id, tile_id }) {
+    const game = state.games[game_id]
+    const tile = game.sub.board[tile_id]
+    const owner = tile.owner
+    let player_index
+    let index = Infinity
+    for (const id in owner) {
+        if (owner[id].index < index) {
+            player_index = id
+            index = owner[id].index
+        }
+    }
+    return player_index
+}
+
 // function getPlayerIdByPlayerIndex({ game_id, player_index }) {}
 
 // function getPlayerIdByPlayerIndex({ game_id, player_index }) {
@@ -22,4 +37,9 @@ function getPlayerFromArgs(args) {
 //         if (game.players[player_id] === player_index) return player_id
 // }
 
-module.exports = { getPlayer, getGame, getPlayerFromArgs }
+module.exports = {
+    getPlayer,
+    getGame,
+    getPlayerFromArgs,
+    getOwnerFromTile
+}

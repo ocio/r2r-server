@@ -37,7 +37,8 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
     }
     const units_availables = tile_from.owner[player_index].units
     if (units > units_availables) {
-        throw 'Not enough units to send'
+        units = units_availables
+        // throw 'Not enough units to send'
     }
     changeTileUnits({
         game_id,

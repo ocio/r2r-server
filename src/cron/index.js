@@ -1,9 +1,12 @@
+const { collect } = require('dop')
 const { GAME_STATUS } = require('runandrisk-common/const')
+const { now } = require('runandrisk-common/utils')
 const Combinatorics = require('js-combinatorics')
 const { GAME_MATCHMAKING } = require('../const/parameters')
 const state = require('../store/state')
 const { startGame, changeTileUnits, deleteTroops } = require('../store/actions')
-const { now } = require('runandrisk-common/utils')
+const { getOwnerFromTile } = require('../store/getters')
+const { diceFight } = require('../rules')
 
 function startCron() {
     const interval = setInterval(() => {
@@ -52,31 +55,43 @@ function updateTroops() {
 function makeFights() {
     const { games } = state
     for (const game_id in games) {
+        const collector = collect()
         const game = games[game_id]
         const board = game.sub.board
         for (const tile_id in board) {
             const tile = board[tile_id]
             const owners = Object.keys(tile.owner)
+            const player_owner = getOwnerFromTile({ game_id, tile_id })
             if (owners.length > 1) {
                 const combinations = Combinatorics.combination(owners, 2)
-                console.log(combinations.length)
                 combinations.forEach(cmb => {
-                    console.log({ game_id, tile_id, cmb })
+                    const player1 = {
+                        id: cmb[0],
+                        is_owner: player_owner === cmb[0],
+                        units: tile.owner[cmb[0]].units
+                    }
+                    const player2 = {
+                        id: cmb[1],
+                        is_owner: player_owner === cmb[1],
+                        units: tile.owner[cmb[1]].units
+                    }
+                    const result = diceFight({ player1, player2 })
+                    result.forEach(player => {
+                        if (player.add !== 0) {
+                            changeTileUnits({
+                                game_id,
+                                tile_id,
+                                player_index: player.id,
+                                units: player.add
+                            })
+                        }
+                    })
+                    // console.log(result)
                 })
-                // console.log({ game_id, tile })
-                // // const total_diff = troop.arrives_at - troop.leaves_at
-                // const current_diff = troop.arrives_at - n
-                // if (current_diff < 1) {
-                //     const player_index = troop.player_index
-                //     const units = troop.units
-                //     const tile_id = troop.tile_id_to
-                //     changeTileUnits({ game_id, tile_id, player_index, units })
-                //     deleteTroops({ game_id, troop_id })
-                // }
             }
         }
+        collector.emit()
     }
-    console.log('--------')
 }
 
 module.exports = {
