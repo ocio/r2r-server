@@ -21,7 +21,12 @@ function Game({ id, public }) {
         addPlayer: ({ player_id, nickname }) => {
             const index = uuid(2, sub.players)
             players[player_id] = index
-            sub.players[index] = { nickname }
+            sub.players[index] = {
+                nickname,
+                units: 0,
+                power: 0,
+                kills: 0
+            }
             return index
         },
         removePlayer: ({ player_id }) => {

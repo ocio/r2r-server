@@ -123,11 +123,17 @@ const startGame = ({ game_id }) => {
         for (const player_index in players) {
             const village = villages[index++]
             const tile_id = village.id
+            const units = getInitialUnits()
             changeTileUnits({
                 game_id,
                 tile_id,
                 player_index,
-                units: getInitialUnits()
+                units
+            })
+            changeGameUnits({
+                game_id,
+                player_index,
+                units
             })
         }
     })()
@@ -148,6 +154,37 @@ const changeTileUnits = action(({ game_id, tile_id, player_index, units }) => {
         }
     }
 })
+
+const changeGameUnits = action(({ game_id, player_index, units }) => {
+    const players = state.games[game_id].sub.players
+    players[player_index].units += units
+})
+
+const changeGameKills = action(({ game_id, player_index, kills }) => {
+    const players = state.games[game_id].sub.players
+    players[player_index].kills += kills
+})
+
+const updateFight = action(
+    ({ game_id, tile_id, player_looser, player_winner, kills = 1 }) => {
+        changeGameKills({
+            game_id,
+            player_index: player_winner,
+            kills
+        })
+        changeTileUnits({
+            game_id,
+            tile_id,
+            player_index: player_looser,
+            units: -kills
+        })
+        changeGameUnits({
+            game_id,
+            player_index: player_looser,
+            units: -kills
+        })
+    }
+)
 
 const createTroops = action(
     ({ game_id, player_index, tile_id_from, tile_id_to, units }) => {
@@ -180,6 +217,9 @@ module.exports = {
     joinPublicGame,
     startGame,
     changeTileUnits,
+    changeGameUnits,
+    changeGameKills,
+    updateFight,
     createTroops,
     deleteTroops
 }

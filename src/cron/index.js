@@ -4,7 +4,12 @@ const { now } = require('runandrisk-common/utils')
 const Combinatorics = require('js-combinatorics')
 const { GAME_MATCHMAKING } = require('../const/parameters')
 const state = require('../store/state')
-const { startGame, changeTileUnits, deleteTroops } = require('../store/actions')
+const {
+    startGame,
+    changeTileUnits,
+    updateFight,
+    deleteTroops
+} = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
 const { diceFight } = require('../rules')
 
@@ -64,33 +69,55 @@ function makeFights() {
             const player_owner = getOwnerFromTile({ game_id, tile_id })
             if (owners.length > 1) {
                 const combinations = Combinatorics.combination(owners, 2)
+                // console.log
                 combinations.forEach(cmb => {
-                    const player1 = {
-                        id: cmb[0],
-                        is_owner: player_owner === cmb[0],
-                        units: tile.owner[cmb[0]].units
+                    if (tile.owner[cmb[0]] === undefined) {
+                        console.log({
+                            id: cmb[0],
+                            owners,
+                            new_owners: Object.keys(tile.owner)
+                        })
+                    } else if (tile.owner[cmb[1]] === undefined) {
+                        console.log({
+                            id: cmb[1],
+                            owners,
+                            new_owners: Object.keys(tile.owner)
+                        })
                     }
-                    const player2 = {
-                        id: cmb[1],
-                        is_owner: player_owner === cmb[1],
-                        units: tile.owner[cmb[1]].units
-                    }
-                    const result = diceFight({ player1, player2 })
-                    result.forEach(player => {
-                        if (player.add !== 0) {
-                            changeTileUnits({
-                                game_id,
-                                tile_id,
-                                player_index: player.id,
-                                units: player.add
-                            })
+                    const [player1, player2] = diceFight({
+                        player1: {
+                            id: cmb[0],
+                            is_owner: player_owner === cmb[0],
+                            units: tile.owner[cmb[0]].units
+                        },
+                        player2: {
+                            id: cmb[1],
+                            is_owner: player_owner === cmb[1],
+                            units: tile.owner[cmb[1]].units
                         }
                     })
+                    if (player1.add < 0) {
+                        updateFight({
+                            game_id,
+                            tile_id,
+                            player_looser: player1.id,
+                            player_winner: player2.id
+                        })
+                    } else if (player2.add < 0) {
+                        updateFight({
+                            game_id,
+                            tile_id,
+                            player_looser: player2.id,
+                            player_winner: player1.id
+                        })
+                    }
+
                     // console.log(result)
                 })
             }
         }
         collector.emit()
+        // console.log(game.sub.players)
     }
 }
 
