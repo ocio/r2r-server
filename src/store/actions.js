@@ -1,7 +1,7 @@
-const { register, action } = require('dop')
+const { register, action, collect } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
-const { getGame, getPlayer } = require('./getters')
+const { getGame, getPlayer, getOwnerFromTile } = require('./getters')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Troop = require('../model/Troop')
@@ -113,45 +113,69 @@ const startGame = ({ game_id }) => {
     )
     // console.log('START GAME!!', villages)
 
-    action(() => {
-        sub.status = GAME_STATUS.PLAYING
-        sub.board = board
-    })()
+    const collector = collect()
+    sub.status = GAME_STATUS.PLAYING
+    sub.board = board
+    collector.emit()
 
+    const collector2 = collect()
     let index = 0
-    action(() => {
-        for (const player_index in players) {
-            const village = villages[index++]
-            const tile_id = village.id
-            const units = getInitialUnits()
-            changeTileUnits({
-                game_id,
-                tile_id,
-                player_index,
-                units
-            })
-            changeGameUnits({
-                game_id,
-                player_index,
-                units
-            })
-        }
-    })()
+    for (const player_index in players) {
+        const village = villages[index++]
+        const tile_id = village.id
+        const units = getInitialUnits()
+        changeTileUnits({
+            game_id,
+            tile_id,
+            player_index,
+            units
+        })
+        changeGameUnits({
+            game_id,
+            player_index,
+            units
+        })
+    }
+    collector2.emit()
 }
 
 const changeTileUnits = action(({ game_id, tile_id, player_index, units }) => {
     const game = state.games[game_id]
-    const board = game.sub.board
-    const tile = board[tile_id]
+    const tile = game.sub.board[tile_id]
     if (tile.owner[player_index] === undefined) {
-        tile.owner[player_index] = { units, index: tile.owner_index++ }
+        addOwnerTile({ game_id, tile_id, player_index, units })
     } else {
         const new_units = tile.owner[player_index].units + units
         if (new_units > 0) {
             tile.owner[player_index].units = new_units
         } else {
-            delete tile.owner[player_index]
+            removeOwnerTile({ game_id, tile_id, player_index })
         }
+    }
+})
+
+const addOwnerTile = action(({ game_id, tile_id, player_index, units }) => {
+    const game = state.games[game_id]
+    const tile = game.sub.board[tile_id]
+    tile.owner[player_index] = { units, index: tile.owner_index++ }
+    if (Object.keys(tile.owner).length === 1) {
+        const power = tile.power
+        changeGamePower({ game_id, player_index, power })
+    }
+})
+
+const removeOwnerTile = action(({ game_id, tile_id, player_index }) => {
+    const game = state.games[game_id]
+    const tile = game.sub.board[tile_id]
+    const power = tile.power
+    const owner_before = getOwnerFromTile({ game_id, tile_id })
+    delete tile.owner[player_index]
+    const owner_after = getOwnerFromTile({ game_id, tile_id })
+    if (player_index === owner_before) {
+        changeGamePower({ game_id, player_index: owner_before, power: -power })
+    }
+    if (owner_after !== undefined && owner_after !== owner_before) {
+        changeGamePower({ game_id, player_index: owner_after, power: power })
     }
 })
 
@@ -163,6 +187,11 @@ const changeGameUnits = action(({ game_id, player_index, units }) => {
 const changeGameKills = action(({ game_id, player_index, kills }) => {
     const players = state.games[game_id].sub.players
     players[player_index].kills += kills
+})
+
+const changeGamePower = action(({ game_id, player_index, power }) => {
+    const players = state.games[game_id].sub.players
+    players[player_index].power += power
 })
 
 const updateFight = action(
