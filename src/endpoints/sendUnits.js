@@ -1,4 +1,3 @@
-// const { action } = require('dop')
 const { isLogged, isValidGame, isPlayerInGame } = require('../validators')
 const { getPlayerFromArgs, getGame } = require('../store/getters')
 const { changeTileUnits, createTroops } = require('../store/actions')

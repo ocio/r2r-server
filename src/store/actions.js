@@ -1,4 +1,4 @@
-const { register, action, collect } = require('dop')
+const { register, collect } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const { getGame, getPlayer, getOwnerFromTile } = require('./getters')
@@ -67,7 +67,8 @@ function joinPublicGame({ player_id }) {
     return joinPublicGame({ player_id })
 }
 
-const addPlayerToGame = action(({ game, player_id }) => {
+function addPlayerToGame({ game, player_id }) {
+    const collector = collect()
     const player = getPlayer({ player_id })
     const player_index = game.addPlayer({
         player_id,
@@ -81,10 +82,12 @@ const addPlayerToGame = action(({ game, player_id }) => {
     ) {
         game.sub.starts_at = now() + GAME_MATCHMAKING.TIMEOUT_TO_START
     }
+    collector.emit()
     return player_index
-})
+}
 
-const deletePlayerFromGame = action(({ game, player_id }) => {
+function deletePlayerFromGame({ game, player_id }) {
+    const collector = collect()
     const player = getPlayer({ player_id })
     const player_index = game.removePlayer({ player_id })
     // If not enough players we set the time the game will start
@@ -95,9 +98,10 @@ const deletePlayerFromGame = action(({ game, player_id }) => {
         delete game.sub.starts_at
     }
     delete player.games[player_index]
-})
+    collector.emit()
+}
 
-const startGame = ({ game_id }) => {
+function startGame({ game_id }) {
     const game = state.games[game_id]
     const sub = game.sub
     const players = sub.players
@@ -139,7 +143,8 @@ const startGame = ({ game_id }) => {
     collector2.emit()
 }
 
-const changeTileUnits = action(({ game_id, tile_id, player_index, units }) => {
+function changeTileUnits({ game_id, tile_id, player_index, units }) {
+    const collector = collect()
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
     if (tile.owner[player_index] === undefined) {
@@ -152,9 +157,11 @@ const changeTileUnits = action(({ game_id, tile_id, player_index, units }) => {
             removeOwnerTile({ game_id, tile_id, player_index })
         }
     }
-})
+    collector.emit()
+}
 
-const addOwnerTile = action(({ game_id, tile_id, player_index, units }) => {
+function addOwnerTile({ game_id, tile_id, player_index, units }) {
+    const collector = collect()
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
     tile.owner[player_index] = { units, index: tile.owner_index++ }
@@ -162,9 +169,11 @@ const addOwnerTile = action(({ game_id, tile_id, player_index, units }) => {
         const power = tile.power
         changeGamePower({ game_id, player_index, power })
     }
-})
+    collector.emit()
+}
 
-const removeOwnerTile = action(({ game_id, tile_id, player_index }) => {
+function removeOwnerTile({ game_id, tile_id, player_index }) {
+    const collector = collect()
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
     const power = tile.power
@@ -177,68 +186,81 @@ const removeOwnerTile = action(({ game_id, tile_id, player_index }) => {
     if (owner_after !== undefined && owner_after !== owner_before) {
         changeGamePower({ game_id, player_index: owner_after, power: power })
     }
-})
+    collector.emit()
+}
 
-const changeGameUnits = action(({ game_id, player_index, units }) => {
+function changeGameUnits({ game_id, player_index, units }) {
     const players = state.games[game_id].sub.players
     players[player_index].units += units
-})
+}
 
-const changeGameKills = action(({ game_id, player_index, kills }) => {
+function changeGameKills({ game_id, player_index, kills }) {
     const players = state.games[game_id].sub.players
     players[player_index].kills += kills
-})
+}
 
-const changeGamePower = action(({ game_id, player_index, power }) => {
+function changeGamePower({ game_id, player_index, power }) {
     const players = state.games[game_id].sub.players
     players[player_index].power += power
-})
+}
 
-const updateFight = action(
-    ({ game_id, tile_id, player_looser, player_winner, kills = 1 }) => {
-        changeGameKills({
-            game_id,
-            player_index: player_winner,
-            kills
-        })
-        changeTileUnits({
-            game_id,
-            tile_id,
-            player_index: player_looser,
-            units: -kills
-        })
-        changeGameUnits({
-            game_id,
-            player_index: player_looser,
-            units: -kills
-        })
-    }
-)
+function updateFight({
+    game_id,
+    tile_id,
+    player_looser,
+    player_winner,
+    kills = 1
+}) {
+    const collector = collect()
+    changeGameKills({
+        game_id,
+        player_index: player_winner,
+        kills
+    })
+    changeGameUnits({
+        game_id,
+        player_index: player_looser,
+        units: -kills
+    })
+    changeTileUnits({
+        game_id,
+        tile_id,
+        player_index: player_looser,
+        units: -kills
+    })
+    collector.emit()
+}
 
-const createTroops = action(
-    ({ game_id, player_index, tile_id_from, tile_id_to, units }) => {
-        const game = state.games[game_id]
-        const id = 'Troop_' + uuid(16, game.sub.troops)
-        const leaves_at = now()
-        const arrives_at = troopsArrivesAt({ leaves_at })
-        const troop = Troop({
-            id,
-            player_index,
-            tile_id_from,
-            tile_id_to,
-            units,
-            leaves_at,
-            arrives_at
-        })
-        game.sub.troops[id] = troop
-        // console.log(game.sub.troops)
-    }
-)
+function createTroops({
+    game_id,
+    player_index,
+    tile_id_from,
+    tile_id_to,
+    units
+}) {
+    const collector = collect()
+    const game = state.games[game_id]
+    const id = 'Troop_' + uuid(16, game.sub.troops)
+    const leaves_at = now()
+    const arrives_at = troopsArrivesAt({ leaves_at })
+    const troop = Troop({
+        id,
+        player_index,
+        tile_id_from,
+        tile_id_to,
+        units,
+        leaves_at,
+        arrives_at
+    })
+    game.sub.troops[id] = troop
+    // console.log(game.sub.troops)
+    collector.emit()
+}
 
-const deleteTroops = action(({ game_id, troop_id }) => {
+function deleteTroops({ game_id, troop_id }) {
     const game = state.games[game_id]
     delete game.sub.troops[troop_id]
-})
+}
 
 module.exports = {
     createPlayer,
