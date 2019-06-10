@@ -2,8 +2,8 @@ const dop = require('dop')
 const { onSubscribe, listen } = require('dop')
 const { startCron } = require('./cron/')
 const { deletePlayer } = require('./store/actions')
-const endpointsSubscription = require('./subscriptions/endpointsSubscription')
-const gameSubscription = require('./subscriptions/gameSubscription')
+const endpointsSubscription = require('./public/endpointsSubscription')
+const gameSubscription = require('./public/gameSubscription')
 
 const port = 4444
 const transport = listen({ port })
