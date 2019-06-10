@@ -14,6 +14,7 @@ function getPlayerFromArgs(args) {
     return getPlayer({ player_id })
 }
 
+// common
 function getOwnerFromTile({ game_id, tile_id }) {
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
@@ -29,6 +30,22 @@ function getOwnerFromTile({ game_id, tile_id }) {
     return player_index
 }
 
+function isAllowedToSendUnits({
+    game_id,
+    player_index,
+    tile_id_from,
+    tile_id_to
+}) {
+    if (tile_id_from === tile_id_to) return false
+    const owner_from = getOwnerFromTile({ game_id, tile_id: tile_id_from })
+    const owner_to = getOwnerFromTile({ game_id, tile_id: tile_id_to })
+    return (
+        owner_from === player_index ||
+        owner_to === player_index ||
+        owner_to === undefined
+    )
+}
+
 // function getPlayerIdByPlayerIndex({ game_id, player_index }) {}
 
 // function getPlayerIdByPlayerIndex({ game_id, player_index }) {
@@ -41,5 +58,6 @@ module.exports = {
     getPlayer,
     getGame,
     getPlayerFromArgs,
-    getOwnerFromTile
+    getOwnerFromTile,
+    isAllowedToSendUnits
 }

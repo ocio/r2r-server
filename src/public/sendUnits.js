@@ -2,7 +2,7 @@ const { isLogged, isValidGame, isPlayerInGame } = require('../validators')
 const {
     getPlayerFromArgs,
     getGame,
-    getOwnerFromTile
+    isAllowedToSendUnits
 } = require('../store/getters')
 const { changeTileUnits, createTroops } = require('../store/actions')
 const { distance } = require('runandrisk-common/board')
@@ -26,8 +26,6 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
     const board = game.sub.board
     const tile_from = board[tile_id_from]
     const tile_to = board[tile_id_to]
-    const owner_from = getOwnerFromTile({ game_id, tile_id: tile_id_from })
-    const owner_to = getOwnerFromTile({ game_id, tile_id: tile_id_to })
     if (tile_from === undefined) {
         throw 'Invalid `tile_id_from`'
     }
@@ -38,11 +36,12 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
         throw 'Invalid distance to send units'
     }
     if (
-        !(
-            owner_from === player_index ||
-            owner_to === player_index ||
-            owner_to === undefined
-        )
+        !isAllowedToSendUnits({
+            game_id,
+            player_index,
+            tile_id_from,
+            tile_id_to
+        })
     ) {
         throw 'Not allowed to send units there'
     }
