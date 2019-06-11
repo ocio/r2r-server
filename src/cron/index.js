@@ -11,13 +11,14 @@ const {
     deleteTroops
 } = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
-const { diceFight } = require('../rules')
+const { diceFight, stopRecruitment, nextRecruitment } = require('../rules')
 
 function startCron() {
     const interval = setInterval(() => {
         launchGames()
         updateTroops()
         makeFights()
+        startRecruiting()
     }, 1000)
 }
 
@@ -72,52 +73,77 @@ function makeFights() {
                 // console.log
                 combinations.forEach(cmb => {
                     if (tile.owner[cmb[0]] === undefined) {
-                        console.log({
+                        console.log('cmb[0]', {
                             id: cmb[0],
                             owners,
                             new_owners: Object.keys(tile.owner)
                         })
                     } else if (tile.owner[cmb[1]] === undefined) {
-                        console.log({
+                        console.log('cmb[1]', {
                             id: cmb[1],
                             owners,
                             new_owners: Object.keys(tile.owner)
                         })
-                    }
-                    const [player1, player2] = diceFight({
-                        player1: {
-                            id: cmb[0],
-                            is_owner: player_owner === cmb[0],
-                            units: tile.owner[cmb[0]].units
-                        },
-                        player2: {
-                            id: cmb[1],
-                            is_owner: player_owner === cmb[1],
-                            units: tile.owner[cmb[1]].units
+                    } else {
+                        const [player1, player2] = diceFight({
+                            player1: {
+                                id: cmb[0],
+                                is_owner: player_owner === cmb[0],
+                                units: tile.owner[cmb[0]].units
+                            },
+                            player2: {
+                                id: cmb[1],
+                                is_owner: player_owner === cmb[1],
+                                units: tile.owner[cmb[1]].units
+                            }
+                        })
+                        if (player1.add < 0) {
+                            updateFight({
+                                game_id,
+                                tile_id,
+                                player_looser: player1.id,
+                                player_winner: player2.id
+                            })
+                        } else if (player2.add < 0) {
+                            updateFight({
+                                game_id,
+                                tile_id,
+                                player_looser: player2.id,
+                                player_winner: player1.id
+                            })
                         }
-                    })
-                    if (player1.add < 0) {
-                        updateFight({
-                            game_id,
-                            tile_id,
-                            player_looser: player1.id,
-                            player_winner: player2.id
-                        })
-                    } else if (player2.add < 0) {
-                        updateFight({
-                            game_id,
-                            tile_id,
-                            player_looser: player2.id,
-                            player_winner: player1.id
-                        })
                     }
-
                     // console.log(result)
                 })
             }
         }
         collector.emit()
         // console.log(game.sub.players)
+    }
+}
+
+function startRecruiting() {
+    const n = now()
+    const { games } = state
+    for (const game_id in games) {
+        const collector = collect()
+        const game = games[game_id]
+        const recruit_at = game.sub.recruit_at
+        const stop_recruitment = stopRecruitment(game.sub.recruit_at)
+        if (!game.sub.recruiting && recruit_at <= n) {
+            console.log('start recruitment', new Date(recruit_at * 1000))
+            game.sub.recruiting = true
+        } else if (game.sub.recruiting && n > stop_recruitment) {
+            game.sub.recruiting = false
+            game.sub.recruit_at = nextRecruitment()
+            console.log('stop recruitment', {
+                recruit_at: new Date(recruit_at * 1000),
+                stop_recruitment: new Date(stop_recruitment * 1000)
+            })
+        } else if (game.sub.recruiting) {
+            console.log('recruiting!')
+        }
+        collector.emit()
     }
 }
 

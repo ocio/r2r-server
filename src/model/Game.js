@@ -6,9 +6,11 @@ function Game({ id, public }) {
     const sub = {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
+        starts_at: undefined,
+        recruit_at: Infinity,
+        recruiting: false,
         troops: {},
         players: {},
-        starts_at: undefined,
         get players_total() {
             return Object.keys(this.players).length
         }

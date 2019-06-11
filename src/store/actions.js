@@ -11,7 +11,8 @@ const {
     generateBoard,
     getInitialUnits,
     getVillagesByPlayers,
-    troopsArrivesAt
+    troopsArrivesAt,
+    nextRecruitment
 } = require('../rules')
 
 function createPlayer({ node, nickname }) {
@@ -120,6 +121,7 @@ function startGame({ game_id }) {
     const collector = collect()
     sub.status = GAME_STATUS.PLAYING
     sub.board = board
+    sub.recruit_at = nextRecruitment()
     collector.emit()
 
     const collector2 = collect()

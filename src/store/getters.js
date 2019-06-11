@@ -1,5 +1,6 @@
 const { getNode } = require('dop')
 const state = require('../store/state')
+const rules = require('runandrisk-common/rules')
 
 function getPlayer({ player_id }) {
     return state.players[player_id]
@@ -14,7 +15,6 @@ function getPlayerFromArgs(args) {
     return getPlayer({ player_id })
 }
 
-// common
 function getOwnerFromTile({ game_id, tile_id }) {
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
@@ -30,6 +30,7 @@ function getOwnerFromTile({ game_id, tile_id }) {
     return player_index
 }
 
+// common
 function isAllowedToSendUnits({
     game_id,
     player_index,
@@ -39,11 +40,7 @@ function isAllowedToSendUnits({
     if (tile_id_from === tile_id_to) return false
     const owner_from = getOwnerFromTile({ game_id, tile_id: tile_id_from })
     const owner_to = getOwnerFromTile({ game_id, tile_id: tile_id_to })
-    return (
-        owner_from === player_index ||
-        owner_to === player_index ||
-        owner_to === undefined
-    )
+    return rules.isAllowedToSendUnits({ owner_from, owner_to, player_index })
 }
 
 // function getPlayerIdByPlayerIndex({ game_id, player_index }) {}
