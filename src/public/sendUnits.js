@@ -72,7 +72,6 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
     //     player_index,
     //     units: units
     // })
-    return true
 }
 
 module.exports = isLogged(isValidGame(isPlayerInGame(sendUnits)))

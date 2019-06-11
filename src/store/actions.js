@@ -6,13 +6,13 @@ const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Troop = require('../model/Troop')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
+const { nextRecruitment } = require('runandrisk-common/rules')
 const { GAME_MATCHMAKING } = require('../const/parameters')
 const {
     generateBoard,
     getInitialUnits,
     getVillagesByPlayers,
-    troopsArrivesAt,
-    nextRecruitment
+    troopsArrivesAt
 } = require('../rules')
 
 function createPlayer({ node, nickname }) {
@@ -121,7 +121,7 @@ function startGame({ game_id }) {
     const collector = collect()
     sub.status = GAME_STATUS.PLAYING
     sub.board = board
-    sub.recruit_at = nextRecruitment()
+    sub.recruit_start = nextRecruitment(now())
     collector.emit()
 
     const collector2 = collect()

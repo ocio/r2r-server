@@ -1,6 +1,5 @@
 const generateBoard = require('./generateBoard')
 const { minOrMax, getBestDice } = require('runandrisk-common/utils')
-const { nextRecruitment, stopRecruitment } = require('runandrisk-common/rules')
 
 function getVillagesByPlayers({ players = 2 }) {
     return players * 2
@@ -59,7 +58,5 @@ module.exports = {
     getVillagesByPlayers,
     getInitialUnits,
     troopsArrivesAt,
-    diceFight,
-    nextRecruitment,
-    stopRecruitment
+    diceFight
 }

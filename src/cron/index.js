@@ -11,7 +11,7 @@ const {
     deleteTroops
 } = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
-const { diceFight, stopRecruitment, nextRecruitment } = require('../rules')
+const { diceFight } = require('../rules')
 
 function startCron() {
     const interval = setInterval(() => {
@@ -128,21 +128,23 @@ function startRecruiting() {
     for (const game_id in games) {
         const collector = collect()
         const game = games[game_id]
-        const recruit_at = game.sub.recruit_at
-        const stop_recruitment = stopRecruitment(game.sub.recruit_at)
-        if (!game.sub.recruiting && recruit_at <= n) {
-            console.log('start recruitment', new Date(recruit_at * 1000))
+        const recruit_start = game.sub.recruit_start
+        if (!game.sub.recruiting && recruit_start <= n) {
+            console.log('start recruitment', { recruit_start })
+            const players = game.sub.players
             game.sub.recruiting = true
-        } else if (game.sub.recruiting && n > stop_recruitment) {
-            game.sub.recruiting = false
-            game.sub.recruit_at = nextRecruitment()
-            console.log('stop recruitment', {
-                recruit_at: new Date(recruit_at * 1000),
-                stop_recruitment: new Date(stop_recruitment * 1000)
-            })
-        } else if (game.sub.recruiting) {
-            console.log('recruiting!')
+            for (const player_index in players) {
+                players[player_index].clicks = 0
+            }
         }
+        // else if (game.sub.recruiting ) {
+        //     console.log('end recruitment', { recruit_start, recruit_end })
+        //     game.sub.recruiting = false
+        //     game.sub.recruit_start = nextRecruitment(n)
+        // }
+        // else if (game.sub.recruiting) {
+        //     console.log('recruiting!')
+        // }
         collector.emit()
     }
 }

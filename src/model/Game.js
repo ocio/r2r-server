@@ -7,8 +7,9 @@ function Game({ id, public }) {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
         starts_at: undefined,
-        recruit_at: Infinity,
         recruiting: false,
+        recruit_start: Infinity,
+        recruit_end: Infinity,
         troops: {},
         players: {},
         get players_total() {
