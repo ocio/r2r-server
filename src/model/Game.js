@@ -6,6 +6,7 @@ function Game({ id, public }) {
     const sub = {
         id,
         status: GAME_STATUS.WAITING_PLAYERS,
+        created_at: undefined,
         starts_at: undefined,
         recruiting: false,
         recruit_start: Infinity,

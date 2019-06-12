@@ -1,10 +1,12 @@
+const { now } = require('runandrisk-common/utils')
 const { isLogged, isValidGame, isPlayerInGame } = require('../validators')
 const { getPlayerFromArgs, getGame } = require('../store/getters')
 // const { changeTileUnits, createTroops } = require('../store/actions')
 
 function sendClicksRecruiting({ game_id }, ...args) {
     const game = getGame({ game_id })
-    if (n > game.sub.recruit_start && n < game.sub.recruit_end) {
+    const n = now()
+    if (!(n > game.sub.recruit_start && n < game.sub.recruit_end)) {
         throw 'Game is not in recruiting phase'
     }
     const player = getPlayerFromArgs(args)

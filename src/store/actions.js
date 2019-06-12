@@ -6,7 +6,7 @@ const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Troop = require('../model/Troop')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
-const { nextRecruitment } = require('runandrisk-common/rules')
+const { nextRecruitment, stopRecruitment } = require('../rules')
 const { GAME_MATCHMAKING } = require('../const/parameters')
 const {
     generateBoard,
@@ -81,7 +81,9 @@ function addPlayerToGame({ game, player_id }) {
         game.sub.starts_at === undefined &&
         game.sub.players_total >= GAME_MATCHMAKING.MIN_PLAYERS
     ) {
-        game.sub.starts_at = now() + GAME_MATCHMAKING.TIMEOUT_TO_START
+        game.sub.created_at = now()
+        game.sub.starts_at =
+            game.sub.created_at + GAME_MATCHMAKING.TIMEOUT_TO_START
     }
     collector.emit()
     return player_index
@@ -121,7 +123,7 @@ function startGame({ game_id }) {
     const collector = collect()
     sub.status = GAME_STATUS.PLAYING
     sub.board = board
-    sub.recruit_start = nextRecruitment(now())
+    changeRecruitmentTimes({ game_id })
     collector.emit()
 
     const collector2 = collect()
@@ -143,6 +145,17 @@ function startGame({ game_id }) {
         })
     }
     collector2.emit()
+}
+
+function changeRecruitmentTimes({ game_id }) {
+    const collector = collect()
+    const game = state.games[game_id]
+    const sub = game.sub
+    sub.recruiting = false
+    sub.recruit_last = now()
+    sub.recruit_start = nextRecruitment(sub.recruit_last)
+    sub.recruit_end = stopRecruitment(sub.recruit_start)
+    collector.emit()
 }
 
 function changeTileUnits({ game_id, tile_id, player_index, units }) {
@@ -274,5 +287,6 @@ module.exports = {
     changeGameKills,
     updateFight,
     createTroops,
-    deleteTroops
+    deleteTroops,
+    changeRecruitmentTimes
 }

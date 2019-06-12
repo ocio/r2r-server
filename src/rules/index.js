@@ -53,10 +53,20 @@ function diceFight({ player1, player2 }) {
     ]
 }
 
+function nextRecruitment(n) {
+    return n + 20 // timestamp + minutes * seconds
+}
+
+function stopRecruitment(n) {
+    return n + 15 // timestamp + minutes * seconds
+}
+
 module.exports = {
     generateBoard,
     getVillagesByPlayers,
     getInitialUnits,
     troopsArrivesAt,
-    diceFight
+    diceFight,
+    nextRecruitment,
+    stopRecruitment
 }
