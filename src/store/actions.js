@@ -158,6 +158,34 @@ function changeRecruitmentTimes({ game_id }) {
     collector.emit()
 }
 
+function deployUnits({ game_id }) {
+    const collector = collect()
+    const game = state.games[game_id]
+    const board = game.sub.board
+    const players = game.sub.players
+    const temp = {}
+    for (const tile_id in board) {
+        const tile = board[tile_id]
+        const player_index = getOwnerFromTile({ game_id, tile_id })
+        if (player_index !== undefined) {
+            const { power, recruited } = players[player_index]
+            const units = Math.round((tile.power * recruited) / power)
+            if (temp[player_index] === undefined)
+                temp[player_index] = { recruited, rest: recruited, tile_id }
+            temp[player_index].rest -= units
+            changeTileUnits({ game_id, tile_id, player_index, units })
+        }
+    }
+    for (const player_index in temp) {
+        const { recruited, rest, tile_id } = temp[player_index]
+        changeGameUnits({ game_id, player_index, units: recruited })
+        if (rest > 0) {
+            changeTileUnits({ game_id, tile_id, player_index, units: rest })
+        }
+    }
+    collector.emit()
+}
+
 function changeTileUnits({ game_id, tile_id, player_index, units }) {
     const collector = collect()
     const game = state.games[game_id]
@@ -288,5 +316,6 @@ module.exports = {
     updateFight,
     createTroops,
     deleteTroops,
-    changeRecruitmentTimes
+    changeRecruitmentTimes,
+    deployUnits
 }

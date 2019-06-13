@@ -9,10 +9,11 @@ const {
     changeTileUnits,
     updateFight,
     deleteTroops,
-    changeRecruitmentTimes
+    changeRecruitmentTimes,
+    deployUnits
 } = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
-const { diceFight } = require('../rules')
+const { diceFight, calcRecruitment } = require('../rules')
 
 function startCron() {
     const interval = setInterval(() => {
@@ -133,20 +134,21 @@ function startRecruiting() {
         const recruit_start = sub.recruit_start
         const recruit_end = sub.recruit_end
         const recruiting = sub.recruiting
+        const players = sub.players
         if (!recruiting && n >= recruit_start) {
-            // console.log('start recruitment', new Date(recruit_start * 1000))
             sub.recruiting = true
-            const players = sub.players
             for (const player_index in players) {
                 players[player_index].clicks = 0
+                players[player_index].recruited = 0
             }
         } else if (recruiting && n >= recruit_end) {
-            // console.log('end recruitment', new Date(recruit_end * 1000))
             changeRecruitmentTimes({ game_id })
+            for (const player_index in players) {
+                const player = players[player_index]
+                player.recruited = calcRecruitment(player)
+            }
+            deployUnits({ game_id })
         }
-        // else if (game.sub.recruiting) {
-        // console.log('recruiting!', new Date(n * 1000))
-        // }
         collector.emit()
     }
 }

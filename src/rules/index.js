@@ -54,11 +54,15 @@ function diceFight({ player1, player2 }) {
 }
 
 function nextRecruitment(n) {
-    return n + 20 // timestamp + minutes * seconds
+    return n + 30 // timestamp + minutes * seconds
 }
 
 function stopRecruitment(n) {
-    return n + 15 // timestamp + minutes * seconds
+    return n + 20 // timestamp + minutes * seconds
+}
+
+function calcRecruitment({ power, clicks }) {
+    return Math.round((power * clicks) / 10)
 }
 
 module.exports = {
@@ -68,5 +72,6 @@ module.exports = {
     troopsArrivesAt,
     diceFight,
     nextRecruitment,
-    stopRecruitment
+    stopRecruitment,
+    calcRecruitment
 }
