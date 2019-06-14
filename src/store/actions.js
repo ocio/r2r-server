@@ -285,7 +285,7 @@ function createTroops({
     const game = state.games[game_id]
     const id = 'Troop_' + uuid(16, game.sub.troops)
     const leaves_at = now()
-    const arrives_at = troopsArrivesAt({ leaves_at })
+    const arrives_at = troopsArrivesAt(leaves_at)
     const troop = Troop({
         id,
         player_index,
@@ -296,8 +296,9 @@ function createTroops({
         arrives_at
     })
     game.sub.troops[id] = troop
-    // console.log(game.sub.troops)
-    collector.emit()
+    collector.emit((mts, node) =>
+        mts.filter(m => game.players[node.player_id] === player_index)
+    )
 }
 
 function deleteTroops({ game_id, troop_id }) {

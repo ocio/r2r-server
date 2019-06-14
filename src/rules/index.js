@@ -15,11 +15,23 @@ function getVillagesByPlayers({ players = 2 }) {
     // return villages[players]
 }
 
+function nextRecruitment(n) {
+    return n + 30 // timestamp + minutes * seconds
+}
+
+function stopRecruitment(n) {
+    return n + 20 // timestamp + minutes * seconds
+}
+
+function calcRecruitment({ power, clicks }) {
+    return Math.round((power * clicks) / 10)
+}
+
 function getInitialUnits() {
     return 1000
 }
 
-function troopsArrivesAt({ leaves_at }) {
+function troopsArrivesAt(leaves_at) {
     return leaves_at + 5
 }
 
@@ -51,18 +63,6 @@ function diceFight({ player1, player2 }) {
             dices: dices2.dices
         }
     ]
-}
-
-function nextRecruitment(n) {
-    return n + 30 // timestamp + minutes * seconds
-}
-
-function stopRecruitment(n) {
-    return n + 20 // timestamp + minutes * seconds
-}
-
-function calcRecruitment({ power, clicks }) {
-    return Math.round((power * clicks) / 10)
 }
 
 module.exports = {
