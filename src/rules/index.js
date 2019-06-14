@@ -16,7 +16,7 @@ function getVillagesByPlayers({ players = 2 }) {
 }
 
 function nextRecruitment(n) {
-    return n + 5 * 60 // timestamp + minutes * seconds
+    return n + 3 * 60 // timestamp + minutes * seconds
 }
 
 function stopRecruitment(n) {
@@ -32,7 +32,7 @@ function getInitialUnits() {
 }
 
 function troopsArrivesAt(leaves_at) {
-    return leaves_at + 5
+    return leaves_at + 30 // seconds
 }
 
 function diceFight({ player1, player2 }) {
