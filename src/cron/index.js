@@ -4,6 +4,7 @@ const { now } = require('runandrisk-common/utils')
 const Combinatorics = require('js-combinatorics')
 const { GAME_MATCHMAKING } = require('../const/parameters')
 const state = require('../store/state')
+const { changeTileUnitsFilter } = require('../store/filters')
 const {
     startGame,
     changeTileUnits,
@@ -119,8 +120,7 @@ function makeFights() {
                 })
             }
         }
-        collector.emit()
-        // console.log(game.sub.players)
+        collector.emit(changeTileUnitsFilter({ game_id }))
     }
 }
 

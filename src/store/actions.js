@@ -2,6 +2,7 @@ const { register, collect } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const { getGame, getPlayer, getOwnerFromTile } = require('./getters')
+const { changeTileUnitsFilter } = require('./filters')
 const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Troop = require('../model/Troop')
@@ -144,7 +145,7 @@ function startGame({ game_id }) {
             units
         })
     }
-    collector2.emit()
+    collector2.emit(changeTileUnitsFilter({ game_id }))
 }
 
 function changeRecruitmentTimes({ game_id }) {
@@ -183,7 +184,7 @@ function deployUnits({ game_id }) {
             changeTileUnits({ game_id, tile_id, player_index, units: rest })
         }
     }
-    collector.emit()
+    collector.emit(changeTileUnitsFilter({ game_id }))
 }
 
 function changeTileUnits({ game_id, tile_id, player_index, units }) {
@@ -200,7 +201,7 @@ function changeTileUnits({ game_id, tile_id, player_index, units }) {
             removeOwnerTile({ game_id, tile_id, player_index })
         }
     }
-    collector.emit()
+    collector.emit(changeTileUnitsFilter({ game_id }))
 }
 
 function addOwnerTile({ game_id, tile_id, player_index, units }) {

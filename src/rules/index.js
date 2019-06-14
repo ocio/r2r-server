@@ -16,11 +16,11 @@ function getVillagesByPlayers({ players = 2 }) {
 }
 
 function nextRecruitment(n) {
-    return n + 30 // timestamp + minutes * seconds
+    return n + 5 * 60 // timestamp + minutes * seconds
 }
 
 function stopRecruitment(n) {
-    return n + 20 // timestamp + minutes * seconds
+    return n + 30 // timestamp + seconds
 }
 
 function calcRecruitment({ power, clicks }) {
