@@ -149,7 +149,7 @@ function startRecruiting() {
             }
             deployUnits({ game_id })
         }
-        collector.emit()
+        collector.emit(changeTileUnitsFilter({ game_id }))
     }
 }
 
