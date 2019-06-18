@@ -1,8 +1,12 @@
-const GAME_MATCHMAKING = {
+const GAME = {
     MIN_PLAYERS: 2,
     MAX_PLAYERS: 4,
-    TIMEOUT_TO_START: 5, // seconds
-    TIMEOUT_TO_END: 20 * 60 // seconds
+    GAME_STARTS_AT: 30, // seconds
+    GAME_ENDS_AT: 20 * 60, // seconds
+    NEXT_RECRUITMENT: 3 * 60,
+    STOP_RECRUITMENT: 30,
+    INITIAL_UNITS: 1000,
+    TROOPS_ARRIVES_AT: 15
 }
 
 const BOARD = {
@@ -14,6 +18,6 @@ const BOARD = {
 }
 
 module.exports = {
-    GAME_MATCHMAKING,
+    GAME,
     BOARD
 }

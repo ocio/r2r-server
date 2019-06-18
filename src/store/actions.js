@@ -7,8 +7,13 @@ const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Troop = require('../model/Troop')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
-const { nextRecruitment, stopRecruitment } = require('../rules')
-const { GAME_MATCHMAKING } = require('../const/parameters')
+const {
+    nextRecruitment,
+    stopRecruitment,
+    gameStartsAt,
+    gameEndsAt
+} = require('../rules')
+const { GAME } = require('../const/parameters')
 const {
     generateBoard,
     getInitialUnits,
@@ -61,7 +66,7 @@ function joinPublicGame({ player_id }) {
             game !== undefined &&
             game.public &&
             game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
-            game.sub.players_total < GAME_MATCHMAKING.MAX_PLAYERS
+            game.sub.players_total < GAME.MAX_PLAYERS
         ) {
             const player_index = addPlayerToGame({ game, player_id })
             return { game, player_index }
@@ -83,12 +88,11 @@ function addPlayerToGame({ game, player_id }) {
     // If enough players we set the time the game will start
     if (
         game.sub.starts_at === undefined &&
-        game.sub.players_total >= GAME_MATCHMAKING.MIN_PLAYERS
+        game.sub.players_total >= GAME.MIN_PLAYERS
     ) {
         game.sub.created_at = now()
-        game.sub.starts_at =
-            game.sub.created_at + GAME_MATCHMAKING.TIMEOUT_TO_START
-        game.sub.ends_at = game.sub.starts_at + GAME_MATCHMAKING.TIMEOUT_TO_END
+        game.sub.starts_at = gameStartsAt(game.sub.created_at)
+        game.sub.ends_at = gameEndsAt(game.sub.starts_at)
     }
     collector.emit()
     return player_index
@@ -101,7 +105,7 @@ function deletePlayerFromGame({ game, player_id }) {
     // If not enough players we set the time the game will start
     if (
         game.sub.starts_at !== undefined &&
-        game.sub.players_total < GAME_MATCHMAKING.MIN_PLAYERS
+        game.sub.players_total < GAME.MIN_PLAYERS
     ) {
         delete game.sub.starts_at
     }
