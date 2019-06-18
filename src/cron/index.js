@@ -32,8 +32,10 @@ function finishGame() {
     for (const game_id in games) {
         const game = games[game_id]
         if (n > game.sub.ends_at) {
-            console.log('ends!')
+            // console.log('ends!')
             delete games[game_id]
+        } else {
+            game.sub.now = n
         }
     }
 }
