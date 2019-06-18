@@ -32,7 +32,7 @@ function getInitialUnits() {
 }
 
 function troopsArrivesAt(leaves_at) {
-    return leaves_at + 30 // seconds
+    return leaves_at + 15 // seconds
 }
 
 function diceFight({ player1, player2 }) {
