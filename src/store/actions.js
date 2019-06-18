@@ -1,4 +1,4 @@
-const { register, collect } = require('dop')
+const { register, collect, util } = require('dop')
 const { uuid, sortByCount, now } = require('runandrisk-common/utils')
 const state = require('./state')
 const { getGame, getPlayer, getOwnerFromTile } = require('./getters')
@@ -31,10 +31,12 @@ function deletePlayer({ player_id }) {
     if (player !== undefined) {
         for (const game_id in player.games) {
             const game = getGame({ game_id })
-            if (game.sub.status === GAME_STATUS.WAITING_PLAYERS)
-                deletePlayerFromGame({ game, player_id })
-            else if (game.sub.status === GAME_STATUS.PLAYING) {
-                isPlaying = true
+            if (game !== undefined) {
+                if (game.sub.status === GAME_STATUS.WAITING_PLAYERS)
+                    deletePlayerFromGame({ game, player_id })
+                else if (game.sub.status === GAME_STATUS.PLAYING) {
+                    isPlaying = true
+                }
             }
         }
         if (!isPlaying) {
@@ -56,6 +58,7 @@ function joinPublicGame({ player_id }) {
     for (const game_id in games) {
         const game = games[game_id]
         if (
+            game !== undefined &&
             game.public &&
             game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
             game.sub.players_total < GAME_MATCHMAKING.MAX_PLAYERS
@@ -85,6 +88,7 @@ function addPlayerToGame({ game, player_id }) {
         game.sub.created_at = now()
         game.sub.starts_at =
             game.sub.created_at + GAME_MATCHMAKING.TIMEOUT_TO_START
+        game.sub.ends_at = game.sub.starts_at + GAME_MATCHMAKING.TIMEOUT_TO_END
     }
     collector.emit()
     return player_index
@@ -208,6 +212,9 @@ function addOwnerTile({ game_id, tile_id, player_index, units }) {
     const collector = collect()
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
+    // const owners = util.merge({}, tile.owner)
+    // owners[player_index] = { units, index: tile.owner_index++ }
+    // tile.owner = owners
     tile.owner[player_index] = { units, index: tile.owner_index++ }
     if (Object.keys(tile.owner).length === 1) {
         const power = tile.power

@@ -18,11 +18,24 @@ const { diceFight, calcRecruitment } = require('../rules')
 
 function startCron() {
     const interval = setInterval(() => {
+        finishGame()
         launchGames()
         updateTroops()
         makeFights()
         startRecruiting()
     }, 1000)
+}
+
+function finishGame() {
+    const n = now()
+    const { games } = state
+    for (const game_id in games) {
+        const game = games[game_id]
+        if (n > game.sub.ends_at) {
+            console.log('ends!')
+            delete games[game_id]
+        }
+    }
 }
 
 function launchGames() {

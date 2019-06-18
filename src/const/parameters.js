@@ -1,7 +1,8 @@
 const GAME_MATCHMAKING = {
     MIN_PLAYERS: 2,
     MAX_PLAYERS: 4,
-    TIMEOUT_TO_START: 5 // seconds
+    TIMEOUT_TO_START: 5, // seconds
+    TIMEOUT_TO_END: 60 // seconds
 }
 
 const BOARD = {
