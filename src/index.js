@@ -28,41 +28,49 @@ transport.on('disconnect', node => {
     // report('(ondisconnect) ' + node.player_id)
 })
 
-function report(type) {
+setInterval(report, 1000)
+function report(type = '') {
     const getFirst = o => {
         for (let i in o) return i
     }
-    console.log('')
+    // console.log('')
     console.log(type)
     console.log('------------------------------------')
     const state = require('./store/state')
-    console.log('DOP:')
-    console.log({
-        nodes: Object.keys(dop.data.node).length,
-        // objects: Object.keys(dop.data.object).length,
-        paths: Object.keys(dop.data.path).length,
-        observers: Object.keys(dop.data.observers).length
+    console.log('memory:', {
+        state: JSON.stringify(state).length,
+        data: JSON.stringify(dop.data).length,
+        nodes: JSON.stringify(dop.data.node).length,
+        paths: JSON.stringify(dop.data.path).length,
+        observers: JSON.stringify(dop.data.observers).length
     })
-    console.log('')
-    console.log('GAMES:')
-    Object.keys(state.games).forEach(game_id => {
-        const game = state.games[game_id]
-        console.log({
-            game_id,
-            players: game.sub.players_total,
-            state: game.sub.status
-        })
-    })
-    console.log('')
-    console.log('PLAYERS:')
-    Object.keys(state.players).forEach(player_id => {
-        const player = state.players[player_id]
-        console.log({
-            player_id,
-            games: Object.keys(player.games).length,
-            game: getFirst(player.games)
-        })
-    })
-    console.log('-------------------------------------')
-    console.log('')
+    // console.log('DOP:', {
+    //     // nodes: Object.keys(dop.data.node).length,
+    //     // objects: Object.keys(dop.data.object).length,
+    //     // paths: Object.keys(dop.data.path).length,
+    //     // observers: Object.keys(dop.data.observers).length,
+    //     data: JSON.stringify(dop.data).length
+    // })
+    // console.log('')
+    // console.log('GAMES:')
+    // Object.keys(state.games).forEach(game_id => {
+    //     const game = state.games[game_id]
+    //     console.log({
+    //         game_id,
+    //         players: game.sub.players_total,
+    //         state: game.sub.status
+    //     })
+    // })
+    // console.log('')
+    // console.log('PLAYERS:')
+    // Object.keys(state.players).forEach(player_id => {
+    //     const player = state.players[player_id]
+    //     console.log({
+    //         player_id,
+    //         games: Object.keys(player.games).length,
+    //         game: getFirst(player.games)
+    //     })
+    // })
+    // console.log('-------------------------------------')
+    // console.log('')
 }

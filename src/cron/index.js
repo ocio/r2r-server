@@ -23,7 +23,7 @@ function startCron() {
         updateTroops()
         makeFights()
         startRecruiting()
-    }, 1000)
+    }, 500)
 }
 
 function finishGame() {

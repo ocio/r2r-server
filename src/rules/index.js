@@ -33,7 +33,7 @@ function stopRecruitment(n) {
 }
 
 function calcRecruitment({ power, clicks }) {
-    return Math.round((power * clicks) / 10)
+    return Math.round((power * clicks) / 100)
 }
 
 function getInitialUnits() {

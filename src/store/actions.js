@@ -215,11 +215,15 @@ function changeTileUnits({ game_id, tile_id, player_index, units }) {
 function addOwnerTile({ game_id, tile_id, player_index, units }) {
     const collector = collect()
     const game = state.games[game_id]
+
     const tile = game.sub.board[tile_id]
+    tile.owner[player_index] = { units, index: tile.owner_index++ }
+
+    // const tile = game.sub.board[tile_id]
     // const owners = util.merge({}, tile.owner)
     // owners[player_index] = { units, index: tile.owner_index++ }
     // tile.owner = owners
-    tile.owner[player_index] = { units, index: tile.owner_index++ }
+
     if (Object.keys(tile.owner).length === 1) {
         const power = tile.power
         changeGamePower({ game_id, player_index, power })
