@@ -61,6 +61,12 @@ function report(type = '') {
         paths: Object.keys(dop.data.path).length,
         observers: Object.keys(dop.data.observers).length
     })
+
+    console.log('state:', {
+        games: Object.keys(state.games).length,
+        players: Object.keys(state.players).length
+    })
+
     // console.log('')
     // console.log('GAMES:')
     // Object.keys(state.games).forEach(game_id => {
