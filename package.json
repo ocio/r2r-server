@@ -11,6 +11,7 @@
     },
     "scripts": {
         "start": "node src/index",
+        "inspect": "node --expose-gc --inspect=9222 src/index.js",
         "test": "jest",
         "testing": "jest --watch"
     }

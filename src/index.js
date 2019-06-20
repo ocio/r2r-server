@@ -33,15 +33,15 @@ setInterval(report, 2000)
 function report(type = '') {
     console.log('------------------------------------')
 
-    dop.util.path(dop.data.node, (source, prop, value, destiny, path, t) => {
-        if (
-            ((prop === 'requests' && path.length === 2) ||
-                prop === 'pending') &&
-            value &&
-            typeof value == 'object'
-        )
-            console.log(path.join('.'), Object.keys(value).length) //
-    })
+    // dop.util.path(dop.data.node, (source, prop, value, destiny, path, t) => {
+    //     if (
+    //         ((prop === 'requests' && path.length === 2) ||
+    //             prop === 'pending') &&
+    //         value &&
+    //         typeof value == 'object'
+    //     )
+    //         console.log(path.join('.'), Object.keys(value).length) //
+    // })
 
     const getFirst = o => {
         for (let i in o) return i
@@ -56,13 +56,11 @@ function report(type = '') {
         // state: JSON.stringify(state).length,
     })
 
-    // console.log('DOP:', {
-    //     // nodes: Object.keys(dop.data.node).length,
-    //     // objects: Object.keys(dop.data.object).length,
-    //     // paths: Object.keys(dop.data.path).length,
-    //     // observers: Object.keys(dop.data.observers).length,
-    //     data: JSON.stringify(dop.data).length
-    // })
+    console.log('DOP:', {
+        nodes: Object.keys(dop.data.node).length,
+        paths: Object.keys(dop.data.path).length,
+        observers: Object.keys(dop.data.observers).length
+    })
     // console.log('')
     // console.log('GAMES:')
     // Object.keys(state.games).forEach(game_id => {

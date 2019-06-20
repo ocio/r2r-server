@@ -3,8 +3,8 @@ const GAME = {
     MIN_PLAYERS: 2,
     MAX_PLAYERS: 4,
     GAME_STARTS_AT: 5, // seconds
-    GAME_ENDS_AT: 15 * 60, // minutes
-    NEXT_RECRUITMENT: 1 * 60, // minutes
+    GAME_ENDS_AT: 10 * 60, // minutes
+    NEXT_RECRUITMENT: 3 * 60, // minutes
     STOP_RECRUITMENT: 20,
     INITIAL_UNITS: 1000,
     TROOPS_ARRIVES_AT: 15,
