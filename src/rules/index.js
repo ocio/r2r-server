@@ -44,6 +44,10 @@ function troopsArrivesAt(leaves_at) {
     return leaves_at + GAME.TROOPS_ARRIVES_AT // seconds
 }
 
+function maxClicksBySecond(seconds) {
+    return seconds * GAME.MAX_CLICKS_PER_SECOND
+}
+
 function diceFight({ player1, player2 }) {
     const factor1 = Math.round(player1.units / player2.units)
     const factor2 = Math.round(player2.units / player1.units)
@@ -84,5 +88,6 @@ module.exports = {
     stopRecruitment,
     calcRecruitment,
     gameStartsAt,
-    gameEndsAt
+    gameEndsAt,
+    maxClicksBySecond
 }

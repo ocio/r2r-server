@@ -23,7 +23,7 @@ function startCron() {
         updateTroops()
         makeFights()
         startRecruiting()
-    }, 500)
+    }, GAME.CRON_INTERVAL)
 }
 
 function finishGame() {
@@ -91,17 +91,17 @@ function makeFights() {
                 // console.log
                 combinations.forEach(cmb => {
                     if (tile.owner[cmb[0]] === undefined) {
-                        console.log('cmb[0]', {
-                            id: cmb[0],
-                            owners,
-                            new_owners: Object.keys(tile.owner)
-                        })
+                        // console.log('cmb[0]', {
+                        //     id: cmb[0],
+                        //     owners,
+                        //     new_owners: Object.keys(tile.owner)
+                        // })
                     } else if (tile.owner[cmb[1]] === undefined) {
-                        console.log('cmb[1]', {
-                            id: cmb[1],
-                            owners,
-                            new_owners: Object.keys(tile.owner)
-                        })
+                        // console.log('cmb[1]', {
+                        //     id: cmb[1],
+                        //     owners,
+                        //     new_owners: Object.keys(tile.owner)
+                        // })
                     } else {
                         const [player1, player2] = diceFight({
                             player1: {

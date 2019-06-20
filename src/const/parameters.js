@@ -1,12 +1,14 @@
 const GAME = {
+    CRON_INTERVAL: 500, // ms
     MIN_PLAYERS: 2,
     MAX_PLAYERS: 4,
-    GAME_STARTS_AT: 30, // seconds
-    GAME_ENDS_AT: 20 * 60, // seconds
-    NEXT_RECRUITMENT: 3 * 60,
-    STOP_RECRUITMENT: 30,
+    GAME_STARTS_AT: 5, // seconds
+    GAME_ENDS_AT: 15 * 60, // minutes
+    NEXT_RECRUITMENT: 1 * 60, // minutes
+    STOP_RECRUITMENT: 20,
     INITIAL_UNITS: 1000,
-    TROOPS_ARRIVES_AT: 15
+    TROOPS_ARRIVES_AT: 15,
+    MAX_CLICKS_PER_SECOND: 10
 }
 
 const BOARD = {

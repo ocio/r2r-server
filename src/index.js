@@ -21,29 +21,41 @@ onSubscribe((...args) => {
 
 transport.on('message', (node, message) => {
     // report('(onmessage) ' + node.player_id + ' ' + message)
+    // node.disconnect()
 })
 
 transport.on('disconnect', node => {
     deletePlayer({ player_id: node.player_id })
-    // report('(ondisconnect) ' + node.player_id)
+    report('(ondisconnect) ' + node.player_id)
 })
 
-setInterval(report, 1000)
+setInterval(report, 2000)
 function report(type = '') {
+    console.log('------------------------------------')
+
+    dop.util.path(dop.data.node, (source, prop, value, destiny, path, t) => {
+        if (
+            ((prop === 'requests' && path.length === 2) ||
+                prop === 'pending') &&
+            value &&
+            typeof value == 'object'
+        )
+            console.log(path.join('.'), Object.keys(value).length) //
+    })
+
     const getFirst = o => {
         for (let i in o) return i
     }
     // console.log('')
-    console.log(type)
-    console.log('------------------------------------')
+    const { heapTotal, heapUsed } = process.memoryUsage()
     const state = require('./store/state')
-    console.log('memory:', {
-        state: JSON.stringify(state).length,
-        data: JSON.stringify(dop.data).length,
-        nodes: JSON.stringify(dop.data.node).length,
-        paths: JSON.stringify(dop.data.path).length,
-        observers: JSON.stringify(dop.data.observers).length
+    console.log({
+        heapTotal: Math.round(heapTotal / (1024 * 1024)),
+        heapUsed: Math.round(heapUsed / (1024 * 1024))
+        // dop: JSON.stringify(dop.data).length
+        // state: JSON.stringify(state).length,
     })
+
     // console.log('DOP:', {
     //     // nodes: Object.keys(dop.data.node).length,
     //     // objects: Object.keys(dop.data.object).length,
