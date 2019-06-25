@@ -14,7 +14,8 @@ const {
     deployUnits
 } = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
-const { diceFight, calcRecruitment } = require('../rules')
+const { diceFight } = require('../rules')
+const { calcRecruitment } = require('runandrisk-common/rules')
 
 function startCron() {
     const interval = setInterval(() => {
@@ -28,11 +29,13 @@ function startCron() {
 
 function finishGame() {
     const n = now()
-    const { games } = state
+    const { games, players } = state
     for (const game_id in games) {
         const game = games[game_id]
         if (n > game.sub.ends_at) {
-            // console.log('ends!')
+            for (const player_id in game.players) {
+                delete players[player_id]
+            }
             delete games[game_id]
         } else {
             game.sub.now = n

@@ -32,10 +32,6 @@ function stopRecruitment(n) {
     return n + GAME.STOP_RECRUITMENT // timestamp + seconds
 }
 
-function calcRecruitment({ power, clicks }) {
-    return Math.round((power * clicks) / 100)
-}
-
 function getInitialUnits() {
     return GAME.INITIAL_UNITS
 }
@@ -86,7 +82,6 @@ module.exports = {
     diceFight,
     nextRecruitment,
     stopRecruitment,
-    calcRecruitment,
     gameStartsAt,
     gameEndsAt,
     maxClicksBySecond

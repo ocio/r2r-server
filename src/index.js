@@ -56,7 +56,7 @@ function report(type = '') {
         // state: JSON.stringify(state).length,
     })
 
-    console.log('DOP:', {
+    console.log('dop:', {
         nodes: Object.keys(dop.data.node).length,
         paths: Object.keys(dop.data.path).length,
         observers: Object.keys(dop.data.observers).length
