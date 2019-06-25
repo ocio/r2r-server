@@ -250,7 +250,9 @@ function removeOwnerTile({ game_id, tile_id, player_index }) {
 
 function changeGameUnits({ game_id, player_index, units }) {
     const players = state.games[game_id].sub.players
-    players[player_index].units += units
+    if (players[player_index].units + units > -1) {
+        players[player_index].units += units
+    }
 }
 
 function changeGameKills({ game_id, player_index, kills }) {

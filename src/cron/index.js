@@ -39,6 +39,10 @@ function finishGame() {
             delete games[game_id]
         } else {
             game.sub.now = n
+            // console.log('recruit_start', game.sub.recruit_start - game.sub.now)
+            // console.log('recruit_end', game.sub.recruit_end - game.sub.now)
+            // console.log('ends_at', game.sub.ends_at - game.sub.now)
+            // console.log('----')
         }
     }
 }
@@ -51,7 +55,7 @@ function launchGames() {
         if (
             game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
             game.sub.players_total >= GAME.MIN_PLAYERS &&
-            game.sub.starts_at - n < 0
+            game.sub.starts_at - n === 0
         ) {
             startGame({ game_id })
         }
