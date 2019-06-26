@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "dependencies": {
         "js-combinatorics": "^0.5.4",
-        "dop": "dop@1.0.0-rc2",
+        "dop": "1.0.0-rc2",
         "runandrisk-common": "github:ocio/runandrisk-common"
     },
     "devDependencies": {
