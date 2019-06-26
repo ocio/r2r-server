@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "dependencies": {
         "js-combinatorics": "^0.5.4",
-        "dop": "file:../dop",
-        "runandrisk-common": "file:../runandrisk-common"
+        "dop": "dop@1.0.0-rc2",
+        "runandrisk-common": "github:ocio/runandrisk-common"
     },
     "devDependencies": {
         "jest": "^24.8.0"

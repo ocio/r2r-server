@@ -29,7 +29,7 @@ transport.on('disconnect', node => {
     report('(ondisconnect) ' + node.player_id)
 })
 
-// setInterval(report, 2000)
+setInterval(report, 5000)
 function report(type = '') {
     console.log('------------------------------------')
 
