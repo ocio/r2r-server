@@ -12,10 +12,10 @@ function Game({ id, public }) {
         recruit_start: Infinity,
         recruit_end: Infinity,
         troops: {},
-        players: {},
-        get players_total() {
-            return Object.keys(this.players).length
-        }
+        players: {}
+        // get players_total() {
+        //     return Object.keys(this.players).length
+        // }
     }
     return {
         id,

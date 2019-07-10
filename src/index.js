@@ -32,6 +32,7 @@ transport.on('disconnect', node => {
 setInterval(report, 10000)
 function report(type = '') {
     console.log('------------------------------------')
+    console.log(new Date().toString())
 
     // dop.util.path(dop.data.node, (source, prop, value, destiny, path, t) => {
     //     if (
@@ -66,6 +67,9 @@ function report(type = '') {
         games: Object.keys(state.games).length,
         players: Object.keys(state.players).length
     })
+
+    // console.log(JSON.stringify(dop.data.path).length)
+    // console.log(dop.data.path)
 
     // console.log('')
     // console.log('GAMES:')

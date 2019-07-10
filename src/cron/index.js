@@ -54,7 +54,7 @@ function launchGames() {
         const game = games[game_id]
         if (
             game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
-            game.sub.players_total >= GAME.MIN_PLAYERS &&
+            Object.keys(game.sub.players).length >= GAME.MIN_PLAYERS &&
             game.sub.starts_at - n === 0
         ) {
             startGame({ game_id })

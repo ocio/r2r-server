@@ -66,7 +66,7 @@ function joinPublicGame({ player_id }) {
             game !== undefined &&
             game.public &&
             game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
-            game.sub.players_total < GAME.MAX_PLAYERS
+            Object.keys(game.sub.players).length < GAME.MAX_PLAYERS
         ) {
             const player_index = addPlayerToGame({ game, player_id })
             return { game, player_index }
@@ -88,7 +88,7 @@ function addPlayerToGame({ game, player_id }) {
     // If enough players we set the time the game will start
     if (
         game.sub.starts_at === undefined &&
-        game.sub.players_total >= GAME.MIN_PLAYERS
+        Object.keys(game.sub.players).length >= GAME.MIN_PLAYERS
     ) {
         game.sub.created_at = now()
         game.sub.starts_at = gameStartsAt(game.sub.created_at)
@@ -118,7 +118,7 @@ function startGame({ game_id }) {
     const sub = game.sub
     const players = sub.players
     const villages_total = getVillagesByPlayers({
-        players: sub.players_total
+        players: Object.keys(sub.players).length
     })
     const board = generateBoard({ villages: villages_total })
     const villages = sortByCount(

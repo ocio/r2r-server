@@ -1,8 +1,8 @@
 const GAME = {
     CRON_INTERVAL: 500, // ms
     MAX_PLAYERS: 4,
-    MIN_PLAYERS: 4,
-    GAME_STARTS_AT: 1, // seconds
+    MIN_PLAYERS: 3,
+    GAME_STARTS_AT: 30, // seconds
     GAME_ENDS_AT: 10 * 60, // minutes
     NEXT_RECRUITMENT: 2 * 60, // minutes
     STOP_RECRUITMENT: 20,
