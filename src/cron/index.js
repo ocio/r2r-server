@@ -52,10 +52,11 @@ function launchGames() {
     const { games } = state
     for (const game_id in games) {
         const game = games[game_id]
+        // console.log(game.sub.starts_at - n)
         if (
             game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
             Object.keys(game.sub.players).length >= GAME.MIN_PLAYERS &&
-            game.sub.starts_at - n === 0
+            game.sub.starts_at - n <= 0
         ) {
             startGame({ game_id })
         }
