@@ -14,7 +14,7 @@ const {
     deployUnits
 } = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
-const { diceFight } = require('../rules')
+const { diceFight, gameShouldStartAt, gameEndsAt } = require('../rules')
 const { calcRecruitment } = require('runandrisk-common/rules')
 
 function startCron() {
@@ -48,17 +48,22 @@ function finishGame() {
 }
 
 function launchGames() {
-    const n = now()
     const { games } = state
     for (const game_id in games) {
         const game = games[game_id]
-        // console.log(game.sub.starts_at - n)
-        if (
-            game.sub.status === GAME_STATUS.WAITING_PLAYERS &&
-            Object.keys(game.sub.players).length >= GAME.MIN_PLAYERS &&
-            game.sub.starts_at - n <= 0
-        ) {
-            startGame({ game_id })
+        const players = game.sub.players
+        // // console.log(game.sub.starts_at - n)
+        if (game.sub.status === GAME_STATUS.WAITING_PLAYERS) {
+            const joined_times = Object.keys(players)
+                .map(key => players[key].joined)
+                .sort((a, b) => a - b)
+            const starts_at = gameShouldStartAt(joined_times)
+            // console.log({ starts_at })
+            if (starts_at <= 0) {
+                startGame({ game_id })
+            } else {
+                game.sub.starts_at = starts_at
+            }
         }
     }
 }

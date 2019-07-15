@@ -26,7 +26,7 @@ transport.on('message', (node, message) => {
 
 transport.on('disconnect', node => {
     deletePlayer({ player_id: node.player_id })
-    report('(ondisconnect) ' + node.player_id)
+    // report('(ondisconnect) ' + node.player_id)
 })
 
 setInterval(report, 10000)

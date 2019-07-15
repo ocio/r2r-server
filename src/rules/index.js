@@ -1,6 +1,7 @@
 const generateBoard = require('./generateBoard')
 const { minOrMax, getBestDice } = require('runandrisk-common/utils')
 const { GAME } = require('../const/parameters')
+const { now } = require('runandrisk-common/utils')
 
 function getVillagesByPlayers({ players = 2 }) {
     return players * 2
@@ -16,10 +17,6 @@ function getVillagesByPlayers({ players = 2 }) {
     // return villages[players]
 }
 
-function gameStartsAt(n) {
-    return n + GAME.GAME_STARTS_AT // timestamp + minutes * seconds
-}
-
 function gameEndsAt(n) {
     return n + GAME.GAME_ENDS_AT // timestamp + minutes * seconds
 }
@@ -30,6 +27,21 @@ function nextRecruitment(n) {
 
 function stopRecruitment(n) {
     return n + GAME.STOP_RECRUITMENT // timestamp + seconds
+}
+
+function gameShouldStartAt(joined_times) {
+    // console.log({ first, last })
+    const total = joined_times.length
+    const n = now()
+    if (total === 1) {
+        return undefined
+    } else if (total === GAME.MAX_PLAYERS) {
+        return 0
+    } else if (total === 2) {
+        return 60 - (n - joined_times[total - 1])
+    } else {
+        return 20 - (n - joined_times[total - 1])
+    }
 }
 
 function getInitialUnits() {
@@ -82,7 +94,7 @@ module.exports = {
     diceFight,
     nextRecruitment,
     stopRecruitment,
-    gameStartsAt,
+    gameShouldStartAt,
     gameEndsAt,
     maxClicksBySecond
 }

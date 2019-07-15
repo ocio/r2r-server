@@ -7,12 +7,7 @@ const Player = require('../model/Player')
 const Game = require('../model/Game')
 const Troop = require('../model/Troop')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
-const {
-    nextRecruitment,
-    stopRecruitment,
-    gameStartsAt,
-    gameEndsAt
-} = require('../rules')
+const { nextRecruitment, stopRecruitment, gameEndsAt } = require('../rules')
 const { GAME } = require('../const/parameters')
 const {
     generateBoard,
@@ -85,15 +80,7 @@ function addPlayerToGame({ game, player_id }) {
         nickname: player.nickname
     })
     player.games[game.id] = player_index
-    // If enough players we set the time the game will start
-    if (
-        game.sub.starts_at === undefined &&
-        Object.keys(game.sub.players).length >= GAME.MIN_PLAYERS
-    ) {
-        game.sub.created_at = now()
-        game.sub.starts_at = gameStartsAt(game.sub.created_at)
-        game.sub.ends_at = gameEndsAt(game.sub.starts_at)
-    }
+    // console.log('addPlayerToGame')
     collector.emit()
     return player_index
 }
@@ -102,18 +89,13 @@ function deletePlayerFromGame({ game, player_id }) {
     const collector = collect()
     const player = getPlayer({ player_id })
     const player_index = game.removePlayer({ player_id })
-    // If not enough players we set the time the game will start
-    if (
-        game.sub.starts_at !== undefined &&
-        game.sub.players_total < GAME.MIN_PLAYERS
-    ) {
-        delete game.sub.starts_at
-    }
+    // console.log('deletePlayerFromGame')
     delete player.games[player_index]
     collector.emit()
 }
 
 function startGame({ game_id }) {
+    const n = now()
     const game = state.games[game_id]
     const sub = game.sub
     const players = sub.players
@@ -130,6 +112,8 @@ function startGame({ game_id }) {
     // console.log('START GAME!!', villages)
 
     const collector = collect()
+    sub.created_at = n
+    sub.ends_at = gameEndsAt(n)
     sub.status = GAME_STATUS.PLAYING
     sub.board = board
     changeRecruitmentTimes({ game_id })

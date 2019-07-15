@@ -1,5 +1,5 @@
 const { GAME_STATUS } = require('runandrisk-common/const')
-const { uuid } = require('runandrisk-common/utils')
+const { uuid, now } = require('runandrisk-common/utils')
 
 function Game({ id, public }) {
     const players = {}
@@ -26,6 +26,7 @@ function Game({ id, public }) {
             const index = uuid(2, sub.players)
             players[player_id] = index
             sub.players[index] = {
+                joined: now(),
                 nickname,
                 units: 0,
                 power: 0,
