@@ -10,7 +10,14 @@ function changeTileUnitsFilter({ game_id }) {
                 return mutation
             })
             .filter(m => {
-                if (m.path[3] === 'fighters' && m.hasOwnProperty('value')) {
+                if (m.prop === 'conquered') {
+                    return true
+                }
+                if (
+                    m.path[3] === 'fighters' &&
+                    m.hasOwnProperty('value')
+                    // m.prop === 'units'
+                ) {
                     const game = state.games[game_id]
                     const node_player_index = game.players[node.player_id]
                     const tile_id = m.path[2]

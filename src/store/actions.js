@@ -124,7 +124,9 @@ function startGame({ game_id }) {
     for (const player_index in players) {
         const village = villages[index++]
         const tile_id = village.id
+        const power = village.power
         const units = getInitialUnits()
+        // console.log(village)
         changeTileUnits({
             game_id,
             tile_id,
@@ -142,8 +144,12 @@ function startGame({ game_id }) {
             player_index,
             units
         })
+        changeGamePower({
+            game_id,
+            player_index,
+            power
+        })
     }
-    console.log(board)
     collector2.emit(changeTileUnitsFilter({ game_id }))
 }
 
@@ -231,13 +237,13 @@ function removeOwnerTile({ game_id, tile_id, player_index }) {
     const power = tile.power
     const owner_before = getOwnerFromTile({ game_id, tile_id })
     delete tile.fighters[player_index]
-    const owner_after = getOwnerFromTile({ game_id, tile_id })
-    if (player_index === owner_before) {
-        changeGamePower({ game_id, player_index: owner_before, power: -power })
-    }
-    if (owner_after !== undefined && owner_after !== owner_before) {
-        changeGamePower({ game_id, player_index: owner_after, power: power })
-    }
+    // const owner_after = getOwnerFromTile({ game_id, tile_id })
+    // if (player_index === owner_before) {
+    //     changeGamePower({ game_id, player_index: owner_before, power: -power })
+    // }
+    // if (owner_after !== undefined && owner_after !== owner_before) {
+    //     changeGamePower({ game_id, player_index: owner_after, power: power })
+    // }
     collector.emit()
 }
 
