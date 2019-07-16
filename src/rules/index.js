@@ -38,9 +38,9 @@ function gameShouldStartAt(joined_times) {
     } else if (total === GAME.MAX_PLAYERS) {
         return 0
     } else if (total === 2) {
-        return 60 - (n - joined_times[total - 1])
+        return GAME.GAME_STARTS_2 - (n - joined_times[total - 1])
     } else {
-        return 20 - (n - joined_times[total - 1])
+        return GAME.GAME_STARTS_3 - (n - joined_times[total - 1])
     }
 }
 

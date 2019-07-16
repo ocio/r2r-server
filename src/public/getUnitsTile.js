@@ -13,10 +13,10 @@ function getUnitsTile({ game_id, tile_id }, ...args) {
     if (tile === undefined) {
         throw 'Invalid `tile_id`'
     }
-    if (!tile.owner.hasOwnProperty(player_index)) {
+    if (!tile.fighters.hasOwnProperty(player_index)) {
         throw "You don't have units on this tile"
     }
-    return tile.owner
+    return tile.fighters
 }
 
 module.exports = isLogged(isValidGame(isPlayerInGame(getUnitsTile)))

@@ -4,8 +4,8 @@ function Tile({ id, col, row, type }) {
         col,
         row,
         type,
-        owner_index: 0,
-        owner: {
+        owner: null, // player_index,
+        fighters: {
             // [<player_index]: {units:1000, index:0}
         }
     }

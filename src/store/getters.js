@@ -18,16 +18,12 @@ function getPlayerFromArgs(args) {
 function getOwnerFromTile({ game_id, tile_id }) {
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
-    const owner = tile.owner
-    let player_index
-    let index = Infinity
-    for (const id in owner) {
-        if (owner[id].index < index) {
-            player_index = id
-            index = owner[id].index
+    const fighters = tile.fighters
+    for (const player_index in fighters) {
+        if (fighters[player_index].conquered === 100) {
+            return player_index
         }
     }
-    return player_index
 }
 
 // common

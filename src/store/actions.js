@@ -131,12 +131,19 @@ function startGame({ game_id }) {
             player_index,
             units
         })
+        changeTileConquered({
+            game_id,
+            tile_id,
+            player_index,
+            conquered: 100
+        })
         changeGameUnits({
             game_id,
             player_index,
             units
         })
     }
+    console.log(board)
     collector2.emit(changeTileUnitsFilter({ game_id }))
 }
 
@@ -183,12 +190,12 @@ function changeTileUnits({ game_id, tile_id, player_index, units }) {
     const collector = collect()
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
-    if (tile.owner[player_index] === undefined) {
+    if (tile.fighters[player_index] === undefined) {
         addOwnerTile({ game_id, tile_id, player_index, units })
     } else {
-        const new_units = tile.owner[player_index].units + units
+        const new_units = tile.fighters[player_index].units + units
         if (new_units > 0) {
-            tile.owner[player_index].units = new_units
+            tile.fighters[player_index].units = new_units
         } else {
             removeOwnerTile({ game_id, tile_id, player_index })
         }
@@ -196,22 +203,24 @@ function changeTileUnits({ game_id, tile_id, player_index, units }) {
     collector.emit(changeTileUnitsFilter({ game_id }))
 }
 
+function changeTileConquered({ game_id, tile_id, player_index, conquered }) {
+    const collector = collect()
+    const game = state.games[game_id]
+    const tile = game.sub.board[tile_id]
+    tile.fighters[player_index].conquered = conquered
+    collector.emit()
+}
+
 function addOwnerTile({ game_id, tile_id, player_index, units }) {
     const collector = collect()
     const game = state.games[game_id]
 
     const tile = game.sub.board[tile_id]
-    tile.owner[player_index] = { units, index: tile.owner_index++ }
-
-    // const tile = game.sub.board[tile_id]
-    // const owners = util.merge({}, tile.owner)
-    // owners[player_index] = { units, index: tile.owner_index++ }
-    // tile.owner = owners
-
-    if (Object.keys(tile.owner).length === 1) {
-        const power = tile.power
-        changeGamePower({ game_id, player_index, power })
+    tile.fighters[player_index] = {
+        units,
+        conquered: 0
     }
+
     collector.emit()
 }
 
@@ -221,7 +230,7 @@ function removeOwnerTile({ game_id, tile_id, player_index }) {
     const tile = game.sub.board[tile_id]
     const power = tile.power
     const owner_before = getOwnerFromTile({ game_id, tile_id })
-    delete tile.owner[player_index]
+    delete tile.fighters[player_index]
     const owner_after = getOwnerFromTile({ game_id, tile_id })
     if (player_index === owner_before) {
         changeGamePower({ game_id, player_index: owner_before, power: -power })

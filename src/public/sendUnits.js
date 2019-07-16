@@ -45,10 +45,10 @@ function sendUnits({ game_id, tile_id_from, tile_id_to, units }, ...args) {
     ) {
         throw 'Not allowed to send units there'
     }
-    if (tile_from.owner[player_index] === undefined) {
+    if (tile_from.fighters[player_index] === undefined) {
         throw 'No units in this tile yet'
     }
-    const units_availables = tile_from.owner[player_index].units
+    const units_availables = tile_from.fighters[player_index].units
     if (units > units_availables) {
         units = units_availables
         // throw 'Not enough units to send'

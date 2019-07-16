@@ -97,35 +97,35 @@ function makeFights() {
         const board = game.sub.board
         for (const tile_id in board) {
             const tile = board[tile_id]
-            const owners = Object.keys(tile.owner)
+            const fighters = Object.keys(tile.fighters)
             const player_owner = getOwnerFromTile({ game_id, tile_id })
-            if (owners.length > 1) {
-                const combinations = Combinatorics.combination(owners, 2)
+            if (fighters.length > 1) {
+                const combinations = Combinatorics.combination(fighters, 2)
                 // console.log
                 combinations.forEach(cmb => {
-                    if (tile.owner[cmb[0]] === undefined) {
+                    if (tile.fighters[cmb[0]] === undefined) {
                         // console.log('cmb[0]', {
                         //     id: cmb[0],
-                        //     owners,
-                        //     new_owners: Object.keys(tile.owner)
+                        //     fighters,
+                        //     new_fighters: Object.keys(tile.fighters)
                         // })
-                    } else if (tile.owner[cmb[1]] === undefined) {
+                    } else if (tile.fighters[cmb[1]] === undefined) {
                         // console.log('cmb[1]', {
                         //     id: cmb[1],
-                        //     owners,
-                        //     new_owners: Object.keys(tile.owner)
+                        //     fighters,
+                        //     new_fighters: Object.keys(tile.fighters)
                         // })
                     } else {
                         const [player1, player2] = diceFight({
                             player1: {
                                 id: cmb[0],
                                 is_owner: player_owner === cmb[0],
-                                units: tile.owner[cmb[0]].units
+                                units: tile.fighters[cmb[0]].units
                             },
                             player2: {
                                 id: cmb[1],
                                 is_owner: player_owner === cmb[1],
-                                units: tile.owner[cmb[1]].units
+                                units: tile.fighters[cmb[1]].units
                             }
                         })
                         if (player1.add < 0) {
