@@ -1,6 +1,10 @@
 const { collect } = require('dop')
 const { GAME_STATUS } = require('runandrisk-common/const')
 const { now } = require('runandrisk-common/utils')
+const {
+    calcRecruitment,
+    calcPercentageConquered
+} = require('runandrisk-common/rules')
 const Combinatorics = require('js-combinatorics')
 const { GAME } = require('../const/parameters')
 const state = require('../store/state')
@@ -11,17 +15,18 @@ const {
     updateFight,
     deleteTroops,
     changeRecruitmentTimes,
-    deployUnits
+    deployUnits,
+    changeGamePower
 } = require('../store/actions')
 const { getOwnerFromTile } = require('../store/getters')
 const { diceFight, gameShouldStartAt, gameEndsAt } = require('../rules')
-const { calcRecruitment } = require('runandrisk-common/rules')
 
 function startCron() {
     const interval = setInterval(() => {
         finishGame()
         launchGames()
         updateTroops()
+        updateContested()
         makeFights()
         startRecruiting()
     }, GAME.CRON_INTERVAL)
@@ -86,6 +91,46 @@ function updateTroops() {
                 deleteTroops({ game_id, troop_id })
             }
         }
+    }
+}
+
+function updateContested() {
+    const { games } = state
+    for (const game_id in games) {
+        const collector = collect()
+        const game = games[game_id]
+        const board = game.sub.board
+        for (const tile_id in board) {
+            const tile = board[tile_id]
+            const power = tile.power
+            const fighters = tile.fighters
+            const fighters_ids = Object.keys(fighters)
+            // const player_owner = getOwnerFromTile({ game_id, tile_id })
+            // console.log(fighters[player_owner])
+            if (
+                fighters_ids.length === 1 // &&
+                //fighters[player_owner].conquered < 100
+            ) {
+                for (const player_index in fighters) {
+                    const conquered = fighters[player_index].conquered
+                    if (conquered < 100) {
+                        const new_conquered_value = calcPercentageConquered({
+                            conquered,
+                            tile_type: tile.type
+                        })
+                        fighters[player_index].conquered = new_conquered_value
+                    }
+                    if (
+                        conquered < 100 &&
+                        fighters[player_index].conquered >= 100
+                    ) {
+                        changeGamePower({ game_id, player_index, power })
+                    }
+                    break
+                }
+            }
+        }
+        collector.emit()
     }
 }
 

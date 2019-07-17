@@ -238,9 +238,9 @@ function removeOwnerTile({ game_id, tile_id, player_index }) {
     const owner_before = getOwnerFromTile({ game_id, tile_id })
     delete tile.fighters[player_index]
     // const owner_after = getOwnerFromTile({ game_id, tile_id })
-    // if (player_index === owner_before) {
-    //     changeGamePower({ game_id, player_index: owner_before, power: -power })
-    // }
+    if (player_index === owner_before) {
+        changeGamePower({ game_id, player_index: owner_before, power: -power })
+    }
     // if (owner_after !== undefined && owner_after !== owner_before) {
     //     changeGamePower({ game_id, player_index: owner_after, power: power })
     // }
@@ -331,6 +331,7 @@ module.exports = {
     changeTileUnits,
     changeGameUnits,
     changeGameKills,
+    changeGamePower,
     updateFight,
     createTroops,
     deleteTroops,
