@@ -65,7 +65,8 @@ function report(type = '') {
 
     console.log('state:', {
         games: Object.keys(state.games).length,
-        players: Object.keys(state.players).length
+        players: Object.keys(state.players).length,
+        games_inc: state.games_inc
     })
 
     // console.log(JSON.stringify(dop.data.path).length)

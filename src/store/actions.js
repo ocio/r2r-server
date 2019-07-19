@@ -111,6 +111,8 @@ function startGame({ game_id }) {
     )
     // console.log('START GAME!!', villages)
 
+    state.games_inc += 1
+
     const collector = collect()
     sub.created_at = n
     sub.ends_at = gameEndsAt(n)
