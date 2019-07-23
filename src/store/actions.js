@@ -8,6 +8,7 @@ const Game = require('../model/Game')
 const Troop = require('../model/Troop')
 const { TILE, GAME_STATUS } = require('runandrisk-common/const')
 const { nextRecruitment, stopRecruitment, gameEndsAt } = require('../rules')
+const { Bot } = require('../bot')
 const { GAME } = require('../const/parameters')
 const {
     generateBoard,
@@ -68,7 +69,9 @@ function joinPublicGame({ player_id }) {
         }
     }
     // Creating a new game and looping again
-    createGame()
+    const game = createGame()
+    // Creating bot
+    Bot({ createPlayer, joinPublicGame, game })
     return joinPublicGame({ player_id })
 }
 
