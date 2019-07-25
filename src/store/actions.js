@@ -69,9 +69,9 @@ function joinPublicGame({ player_id }) {
         }
     }
     // Creating a new game and looping again
-    const game = createGame()
+    createGame()
     // Creating bot
-    Bot({ createPlayer, joinPublicGame, game })
+    Bot({ createPlayer, joinPublicGame, changeTileUnits, createTroops })
     return joinPublicGame({ player_id })
 }
 

@@ -26,6 +26,19 @@ function getOwnerFromTile({ game_id, tile_id }) {
     }
 }
 
+function getMaxUnitsFromTile({ game_id, tile_id }) {
+    const game = state.games[game_id]
+    const tile = game.sub.board[tile_id]
+    const fighters = tile.fighters
+    let units = 0
+    for (const player_index in fighters) {
+        if (fighters[player_index].units > units) {
+            units = fighters[player_index].units
+        }
+    }
+    return units
+}
+
 // common
 function isAllowedToSendUnits({
     game_id,
@@ -52,5 +65,6 @@ module.exports = {
     getGame,
     getPlayerFromArgs,
     getOwnerFromTile,
+    getMaxUnitsFromTile,
     isAllowedToSendUnits
 }
