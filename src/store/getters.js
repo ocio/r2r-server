@@ -16,6 +16,7 @@ function getPlayerFromArgs(args) {
 }
 
 function getOwnerFromTile({ game_id, tile_id }) {
+    if (state.games[game_id] === undefined) return
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
     const fighters = tile.fighters
@@ -27,6 +28,7 @@ function getOwnerFromTile({ game_id, tile_id }) {
 }
 
 function getMaxUnitsFromTile({ game_id, tile_id }) {
+    if (state.games[game_id] === undefined) return
     const game = state.games[game_id]
     const tile = game.sub.board[tile_id]
     const fighters = tile.fighters

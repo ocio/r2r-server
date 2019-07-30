@@ -38,6 +38,7 @@ function finishGame() {
     for (const game_id in games) {
         const game = games[game_id]
         if (n > game.sub.ends_at) {
+            game.sub.status = GAME_STATUS.FINISHED
             for (const player_id in game.players) {
                 delete players[player_id]
             }
